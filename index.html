@@ -171,11 +171,11 @@
         </div>
         <style>@keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }</style>
 
-        <button id="btn-enter" onclick="app.enterApp()" class="hidden w-full max-w-xs bg-opera-red text-white font-bold py-4 rounded-xl shadow-xl shadow-red-900/30 active:scale-95 transition-transform flex items-center justify-center gap-2 relative z-10 border-t border-white/20">
+        <button id="btn-enter" onclick="window.app.enterApp()" class="hidden w-full max-w-xs bg-opera-red text-white font-bold py-4 rounded-xl shadow-xl shadow-red-900/30 active:scale-95 transition-transform flex items-center justify-center gap-2 relative z-10 border-t border-white/20">
             Start Exploring <i class="fas fa-arrow-right ml-1"></i>
         </button>
         
-        <div onclick="ui.openModal('login-modal')" class="absolute bottom-8 text-[10px] text-white/30 font-bold uppercase tracking-widest p-4 cursor-pointer z-10 hover:text-white transition-colors">Admin Access</div>
+        <div onclick="window.ui.openModal('login-modal')" class="absolute bottom-8 text-[10px] text-white/30 font-bold uppercase tracking-widest p-4 cursor-pointer z-10 hover:text-white transition-colors">Admin Access</div>
     </div>
 
     <!-- 2. MAIN APP LAYOUT -->
@@ -187,10 +187,10 @@
                 <i class="fas fa-pepper-hot text-opera-red"></i> Foodways
             </div>
             <div class="flex gap-3">
-                <button onclick="ui.toggleSearch()" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+                <button onclick="window.ui.toggleSearch()" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
                     <i class="fas fa-search text-xs"></i>
                 </button>
-                <button id="header-add-btn" onclick="app.initiateAddEntry()" class="hidden w-8 h-8 bg-opera-red text-white rounded-full flex items-center justify-center active:scale-95 shadow-lg shadow-red-900/50">
+                <button id="header-add-btn" onclick="window.app.initiateAddEntry()" class="hidden w-8 h-8 bg-opera-red text-white rounded-full flex items-center justify-center active:scale-95 shadow-lg shadow-red-900/50">
                     <i class="fas fa-plus text-xs"></i>
                 </button>
             </div>
@@ -198,11 +198,11 @@
 
         <!-- SEARCH OVERLAY -->
         <div id="search-overlay" class="fixed top-14 left-0 w-full bg-white border-b border-gray-100 p-2 z-30 hidden shadow-sm transition-all">
-            <input type="text" id="global-search" placeholder="Search food, country..." class="w-full bg-gray-100 text-gray-800 text-sm rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-opera-gold/50" oninput="app.handleGlobalSearch(this.value)">
+            <input type="text" id="global-search" placeholder="Search food, country..." class="w-full bg-gray-100 text-gray-800 text-sm rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-opera-gold/50" oninput="window.app.handleGlobalSearch(this.value)">
         </div>
 
         <!-- VIEW: DASHBOARD (FEED) -->
-        <div id="view-dashboard" class="view-container pt-18 px-4">
+        <div id="view-dashboard" class="view-container pt-24 px-4">
             <div class="h-4"></div>
             
             <!-- KPI Grid -->
@@ -229,7 +229,7 @@
             <div id="card-feed" class="pb-4"></div>
             
             <div class="text-center py-4">
-                <button id="btn-load-more" class="text-xs font-bold text-opera-midnight bg-gray-200 px-6 py-3 rounded-full hover:bg-gray-300 transition-colors" onclick="dashboard.loadMore()">Load More</button>
+                <button id="btn-load-more" class="text-xs font-bold text-opera-midnight bg-gray-200 px-6 py-3 rounded-full hover:bg-gray-300 transition-colors" onclick="window.dashboard.loadMore()">Load More</button>
             </div>
         </div>
 
@@ -239,7 +239,7 @@
             
             <!-- Map Controls -->
             <div class="absolute top-16 right-4 z-[400] flex flex-col gap-2">
-                <button onclick="mapLogic.resetZoom()" class="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-gray-700 active:bg-gray-50 border border-gray-100">
+                <button onclick="window.mapLogic.resetZoom()" class="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-gray-700 active:bg-gray-50 border border-gray-100">
                     <i class="fas fa-compress-arrows-alt"></i>
                 </button>
             </div>
@@ -252,15 +252,15 @@
         </div>
 
         <!-- VIEW: PROFILE (Simple Stats/Admin) -->
-        <div id="view-profile" class="view-container pt-18 px-4 hidden">
+        <div id="view-profile" class="view-container pt-24 px-4 hidden">
             <div class="h-4"></div>
             <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-6 text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-opera-midnight via-opera-red to-opera-gold"></div>
                 <div class="w-20 h-20 bg-gray-50 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl border-4 border-white shadow-lg">👤</div>
                 <h2 class="font-black text-xl text-opera-midnight" id="profile-role">Guest User</h2>
                 <div class="mt-4 flex justify-center gap-2">
-                    <button id="btn-login-profile" onclick="ui.openModal('login-modal')" class="text-xs bg-opera-red text-white px-4 py-2 rounded-full font-bold shadow-lg shadow-red-200">Login Admin</button>
-                    <button id="btn-logout-profile" onclick="app.logout()" class="hidden text-xs bg-gray-200 text-gray-600 px-4 py-2 rounded-full font-bold">Logout</button>
+                    <button id="btn-login-profile" onclick="window.ui.openModal('login-modal')" class="text-xs bg-opera-red text-white px-4 py-2 rounded-full font-bold shadow-lg shadow-red-200">Login Admin</button>
+                    <button id="btn-logout-profile" onclick="window.app.logout()" class="hidden text-xs bg-gray-200 text-gray-600 px-4 py-2 rounded-full font-bold">Logout</button>
                 </div>
             </div>
 
@@ -276,22 +276,22 @@
             </div>
             
             <!-- Primary Action Button (Navy) -->
-            <button onclick="app.exportData()" class="w-full bg-opera-midnight text-white font-bold py-4 rounded-xl text-sm flex items-center justify-center gap-3 active:scale-95 transition-transform mb-10 shadow-xl shadow-blue-900/20">
+            <button onclick="window.app.exportData()" class="w-full bg-opera-midnight text-white font-bold py-4 rounded-xl text-sm flex items-center justify-center gap-3 active:scale-95 transition-transform mb-10 shadow-xl shadow-blue-900/20">
                 <i class="fas fa-file-csv text-opera-gold"></i> Download Dataset
             </button>
         </div>
 
         <!-- BOTTOM NAVIGATION - REVISED -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="app.switchTab('dashboard', this)">
+            <div class="nav-item active" onclick="window.app.switchTab('dashboard', this)">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </div>
-            <div class="nav-item" onclick="app.switchTab('map', this)">
+            <div class="nav-item" onclick="window.app.switchTab('map', this)">
                 <i class="fas fa-map-marked-alt"></i>
                 <span>Map</span>
             </div>
-            <div class="nav-item" onclick="app.switchTab('profile', this)">
+            <div class="nav-item" onclick="window.app.switchTab('profile', this)">
                 <i class="fas fa-chart-pie"></i>
                 <span>Analytics</span>
             </div>
@@ -304,15 +304,15 @@
     <!-- DETAIL MODAL -->
     <div id="detail-modal" class="fixed inset-0 z-[2000] bg-white hidden flex flex-col modal-enter">
         <div class="h-14 border-b border-gray-100 flex items-center justify-between px-4 bg-white/95 backdrop-blur-sm sticky top-0 z-10">
-            <button onclick="ui.closeModal('detail-modal')" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-800 transition-colors">
+            <button onclick="window.ui.closeModal('detail-modal')" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-800 transition-colors">
                 <i class="fas fa-arrow-left"></i>
             </button>
             <span class="font-bold text-sm truncate w-40 text-center text-opera-midnight" id="dt-header-title">Detail</span>
             <div class="flex gap-2">
-                <button onclick="app.exportToPDF()" class="w-8 h-8 rounded-full bg-opera-midnight text-white flex items-center justify-center hover:bg-gray-800 transition-colors shadow-lg shadow-blue-900/20">
+                <button onclick="window.app.exportToPDF()" class="w-8 h-8 rounded-full bg-opera-midnight text-white flex items-center justify-center hover:bg-gray-800 transition-colors shadow-lg shadow-blue-900/20">
                     <i class="fas fa-file-pdf text-xs"></i>
                 </button>
-                <button id="btn-edit-entry" onclick="app.openInputModal('edit')" class="hidden w-8 h-8 rounded-full bg-opera-red text-white flex items-center justify-center shadow-lg shadow-red-500/30">
+                <button id="btn-edit-entry" onclick="window.app.openInputModal('edit')" class="hidden w-8 h-8 rounded-full bg-opera-red text-white flex items-center justify-center shadow-lg shadow-red-500/30">
                     <i class="fas fa-pen text-xs"></i>
                 </button>
             </div>
@@ -327,9 +327,9 @@
     <!-- INPUT MODAL (Admin) -->
     <div id="input-modal" class="fixed inset-0 z-[2100] bg-gray-50 hidden flex flex-col modal-enter">
         <div class="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 sticky top-0 z-10">
-            <button onclick="ui.closeModal('input-modal')" class="text-gray-400 font-bold text-xs uppercase tracking-wide hover:text-gray-600">Cancel</button>
+            <button onclick="window.ui.closeModal('input-modal')" class="text-gray-400 font-bold text-xs uppercase tracking-wide hover:text-gray-600">Cancel</button>
             <span class="font-bold text-opera-midnight" id="input-title">New Entry</span>
-            <button onclick="app.saveData()" id="btn-save" class="bg-opera-midnight text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-lg shadow-blue-900/20">Save</button>
+            <button onclick="window.app.saveData()" id="btn-save" class="bg-opera-midnight text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-lg shadow-blue-900/20">Save</button>
         </div>
         
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
@@ -344,7 +344,7 @@
             <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
                 <div class="flex justify-between items-center border-b pb-2">
                     <h4 class="text-[10px] font-black text-opera-red uppercase tracking-widest">Location</h4>
-                    <button onclick="app.pickLocation('main')" class="text-[10px] bg-opera-midnight text-white px-3 py-1.5 rounded-md font-bold hover:bg-gray-800 transition-colors">
+                    <button onclick="window.app.pickLocation('main')" class="text-[10px] bg-opera-midnight text-white px-3 py-1.5 rounded-md font-bold hover:bg-gray-800 transition-colors">
                         <i class="fas fa-map-pin mr-1"></i> Pick on Map
                     </button>
                 </div>
@@ -358,11 +358,11 @@
             <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
                 <h4 class="text-[10px] font-black text-opera-gold uppercase tracking-widest border-b pb-2">Origins (Heritage)</h4>
                 <div class="relative">
-                    <input type="text" id="inp-origin-name" placeholder="Origin Food Name" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm font-bold" oninput="app.handleOriginSearch(this.value)">
+                    <input type="text" id="inp-origin-name" placeholder="Origin Food Name" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm font-bold" oninput="window.app.handleOriginSearch(this.value)">
                     <div id="origin-suggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-300 z-20 shadow-xl max-h-40 overflow-y-auto rounded-b-xl"></div>
                 </div>
                 <input type="text" id="inp-origin-country" placeholder="Origin Country" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
-                <button onclick="app.pickLocation('origin')" class="w-full py-3 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl border border-gray-200 hover:bg-gray-100 border-dashed">
+                <button onclick="window.app.pickLocation('origin')" class="w-full py-3 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl border border-gray-200 hover:bg-gray-100 border-dashed">
                     <i class="fas fa-crosshairs mr-1"></i> Set Origin Coordinates
                 </button>
                 <div class="hidden grid-cols-2 gap-2">
@@ -387,7 +387,7 @@
                 <input type="text" id="inp-research" placeholder="Research Links" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
             </div>
 
-            <button id="btn-delete" onclick="app.deleteData()" class="w-full py-4 text-red-500 font-bold bg-red-50 rounded-xl border border-red-100 hover:bg-red-100 transition-colors hidden">
+            <button id="btn-delete" onclick="window.app.deleteData()" class="w-full py-4 text-red-500 font-bold bg-red-50 rounded-xl border border-red-100 hover:bg-red-100 transition-colors hidden">
                 <i class="fas fa-trash-alt mr-2"></i> Delete Entry
             </button>
             <div class="h-20"></div>
@@ -406,8 +406,8 @@
                 <input type="password" id="login-pass" placeholder="••••••••" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 text-center font-bold focus:ring-2 focus:ring-opera-red/20 outline-none">
             </div>
             
-            <button onclick="app.login()" id="btn-login" class="w-full bg-opera-midnight text-white font-bold py-4 rounded-xl mt-6 shadow-xl shadow-blue-900/20 active:scale-95 transition-transform">Verify Credentials</button>
-            <button onclick="ui.closeModal('login-modal')" class="w-full text-gray-400 text-xs font-bold mt-4 hover:text-gray-600">CANCEL</button>
+            <button onclick="window.app.login()" id="btn-login" class="w-full bg-opera-midnight text-white font-bold py-4 rounded-xl mt-6 shadow-xl shadow-blue-900/20 active:scale-95 transition-transform">Verify Credentials</button>
+            <button onclick="window.ui.closeModal('login-modal')" class="w-full text-gray-400 text-xs font-bold mt-4 hover:text-gray-600">CANCEL</button>
         </div>
     </div>
 
@@ -415,7 +415,7 @@
     <div id="picker-ui" class="fixed top-0 left-0 w-full z-[2050] hidden">
         <div class="bg-white/90 backdrop-blur-md p-4 border-b border-gray-200 flex justify-between items-center shadow-lg">
             <span class="font-bold text-sm text-opera-red animate-pulse"><i class="fas fa-map-pin mr-1"></i> Tap Map Location</span>
-            <button onclick="app.cancelPicker()" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-gray-600 hover:bg-gray-200">Cancel</button>
+            <button onclick="window.app.cancelPicker()" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-gray-600 hover:bg-gray-200">Cancel</button>
         </div>
     </div>
 
@@ -431,7 +431,7 @@
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbw5XZBvqGjPbjB_nE2ZeJ27Ppib9-9DjSKDeVzNF-HDQU0pes9rzVn6jI9uYYjfTac/exec';
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuPArVU91axob82CTzIgfmODCpa43OrFNIymoOVfV6UwtzUH7Yzb-yzorb3yBooJikXvsKSv10z3fV/pub?output=csv';
         
-        // Define handleImageError GLOBALLY first so it can be called by inline onclick
+        // Define handleImageError GLOBALLY first
         window.handleImageError = function(el) {
             el.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>';
         };
@@ -530,7 +530,6 @@
                 if(window.detailMaps.conn) { window.detailMaps.conn.remove(); window.detailMaps.conn = null; }
 
                 setTimeout(() => {
-                    // 1. Food Distribution Map
                     if(document.getElementById('detail-geo-map')) {
                         const map1 = L.map('detail-geo-map', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false }).setView([d.lat, d.lng], 5);
                         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map1);
@@ -544,15 +543,11 @@
                         window.detailMaps.geo = map1;
                     }
 
-                    // 2. Influence Map
                     if(document.getElementById('detail-conn-map')) {
                         const map2 = L.map('detail-conn-map', { zoomControl: false, attributionControl: false, dragging: true, scrollWheelZoom: false }); 
                         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map2);
-                        
                         const bounds = L.latLngBounds();
                         let hasConnections = false;
-
-                        // Connection Logic (Same as before)
                         const childrenMap = {};
                         state.data.forEach(item => {
                             if(item.origin_food_name) {
@@ -561,11 +556,9 @@
                                 childrenMap[pName].push(item);
                             }
                         });
-
                         let rootName = d.food_name;
                         let curr = d;
                         const pathUp = new Set([d.id]);
-
                         while(curr && curr.origin_food_name) {
                             const parentName = curr.origin_food_name;
                             const parentNode = state.data.find(n => n.food_name.toLowerCase().trim() === parentName.toLowerCase().trim());
@@ -576,11 +569,9 @@
                                 curr = parentNode;
                             } else { break; }
                         }
-
                         const familyNodes = [];
                         const queue = [rootName];
                         const visitedNames = new Set();
-
                         while(queue.length > 0) {
                             const pName = queue.shift();
                             const lowerP = pName.toLowerCase().trim();
@@ -595,55 +586,22 @@
                                 });
                             }
                         }
-
                         const uniqueNodes = Array.from(new Map(familyNodes.map(item => [item.id, item])).values());
                         if(!uniqueNodes.find(n => n.id === d.id)) uniqueNodes.push(d); 
                         uniqueNodes.sort((a, b) => (a.id === d.id) ? 1 : (b.id === d.id) ? -1 : 0);
-
                         uniqueNodes.forEach(node => {
                             if(node.origin_lat && node.origin_lng && node.lat && node.lng) {
-                                 L.polyline([[node.origin_lat, node.origin_lng], [node.lat, node.lng]], {
-                                    color: '#d4af37', /* GOLD LINES */
-                                    weight: 2,
-                                    opacity: 0.6,
-                                    dashArray: '6, 6'
-                                }).addTo(map2);
-                                
-                                L.circleMarker([node.origin_lat, node.origin_lng], { 
-                                    color: '#d4af37', fillColor: '#fff', fillOpacity: 1, radius: 4, weight: 2
-                                }).addTo(map2);
-                                
+                                 L.polyline([[node.origin_lat, node.origin_lng], [node.lat, node.lng]], { color: '#d4af37', weight: 2, opacity: 0.6, dashArray: '6, 6' }).addTo(map2);
+                                L.circleMarker([node.origin_lat, node.origin_lng], { color: '#d4af37', fillColor: '#fff', fillOpacity: 1, radius: 4, weight: 2 }).addTo(map2);
                                 bounds.extend([node.origin_lat, node.origin_lng]);
                                 hasConnections = true;
                             }
-
                             const isCurrent = node.id === d.id;
-                            const m = L.circleMarker([node.lat, node.lng], { 
-                                color: isCurrent ? '#ff1b2d' : '#1a1a2e', /* Red or Navy */
-                                fillColor: isCurrent ? '#ff1b2d' : '#f3f4f6', 
-                                fillOpacity: 1, 
-                                radius: isCurrent ? 6 : 4,
-                                weight: isCurrent ? 0 : 2
-                            }).addTo(map2);
-
-                            if(isCurrent) {
-                                m.bindTooltip(node.food_name, { permanent: true, direction: 'top', className: 'custom-tooltip' });
-                            } else {
-                                m.on('click', () => { 
-                                    window.ui.closeModal('detail-modal');
-                                    setTimeout(() => window.dashboard.showDetail(node), 300);
-                                });
-                            }
+                            const m = L.circleMarker([node.lat, node.lng], { color: isCurrent ? '#ff1b2d' : '#1a1a2e', fillColor: isCurrent ? '#ff1b2d' : '#f3f4f6', fillOpacity: 1, radius: isCurrent ? 6 : 4, weight: isCurrent ? 0 : 2 }).addTo(map2);
+                            if(isCurrent) { m.bindTooltip(node.food_name, { permanent: true, direction: 'top', className: 'custom-tooltip' }); } else { m.on('click', () => { window.ui.closeModal('detail-modal'); setTimeout(() => window.dashboard.showDetail(node), 300); }); }
                             bounds.extend([node.lat, node.lng]);
                         });
-
-                        if(hasConnections || uniqueNodes.length > 0) {
-                            if(bounds.isValid()) map2.fitBounds(bounds, {padding:[40,40]});
-                            else map2.setView([d.lat, d.lng], 4);
-                        } else {
-                            map2.setView([d.lat, d.lng], 4);
-                            L.circleMarker([d.lat, d.lng], { color: '#ff1b2d', radius: 5 }).addTo(map2);
-                        }
+                        if(hasConnections || uniqueNodes.length > 0) { if(bounds.isValid()) map2.fitBounds(bounds, {padding:[40,40]}); else map2.setView([d.lat, d.lng], 4); } else { map2.setView([d.lat, d.lng], 4); L.circleMarker([d.lat, d.lng], { color: '#ff1b2d', radius: 5 }).addTo(map2); }
                         window.detailMaps.conn = map2;
                     }
                 }, 500); 
@@ -662,48 +620,24 @@
                 const filtered = state.filter ? state.data.filter(d => d.food_name.toLowerCase().includes(state.filter.toLowerCase()) || d.country.toLowerCase().includes(state.filter.toLowerCase())) : state.data;
                 const visibleIds = new Set(filtered.map(d=>d.id));
                 filtered.forEach(d => { if(d.origin_food_name) { const origin = state.data.find(n => n.food_name === d.origin_food_name); if(origin) visibleIds.add(origin.id); } });
-
                 const dataToRender = state.data.filter(d => visibleIds.has(d.id));
-
-                // PASS 1: DRAW LINES (Layer Terbawah - Digambar Duluan)
                 dataToRender.forEach(d => {
                     if(!d.lat || !d.lng) return;
                     if(d.origin_lat && d.origin_lng) {
-                        const line = L.polyline([[d.origin_lat, d.origin_lng], [d.lat, d.lng]], { 
-                            color: '#d4af37', 
-                            weight: 1.5, 
-                            opacity: 0.3, // Lebih transparan biar tidak semrawut
-                            dashArray: '4, 6' 
-                        }).addTo(window.mapLogic.map);
+                        const line = L.polyline([[d.origin_lat, d.origin_lng], [d.lat, d.lng]], { color: '#d4af37', weight: 1.5, opacity: 0.3, dashArray: '4, 6' }).addTo(window.mapLogic.map);
                         window.mapLogic.layers.push(line);
                     }
                 });
-
-                // PASS 2: DRAW ORIGIN DOTS (Layer Tengah - Titik Emas)
                 dataToRender.forEach(d => {
                     if(!d.lat || !d.lng) return;
                     if(d.origin_lat && d.origin_lng) {
-                        const oDot = L.circleMarker([d.origin_lat, d.origin_lng], { 
-                            color: '#d4af37', 
-                            radius: 3, 
-                            fillOpacity: 1, 
-                            stroke: false // Tanpa border biar rapi
-                        }).addTo(window.mapLogic.map);
+                        const oDot = L.circleMarker([d.origin_lat, d.origin_lng], { color: '#d4af37', radius: 3, fillOpacity: 1, stroke: false }).addTo(window.mapLogic.map);
                         window.mapLogic.layers.push(oDot);
                     }
                 });
-
-                // PASS 3: DRAW LOCAL DOTS (Layer Paling Atas - Titik Merah)
                 dataToRender.forEach(d => {
                     if(!d.lat || !d.lng) return;
-                    // Titik Merah dengan border putih agar kontras jika menumpuk
-                    const m = L.circleMarker([d.lat, d.lng], { 
-                        color: '#fff', // Border putih
-                        fillColor: '#ff1b2d', 
-                        fillOpacity: 1, 
-                        radius: 6, 
-                        weight: 2 // Tebal border putih
-                    }).addTo(window.mapLogic.map);
+                    const m = L.circleMarker([d.lat, d.lng], { color: '#fff', fillColor: '#ff1b2d', fillOpacity: 1, radius: 6, weight: 2 }).addTo(window.mapLogic.map);
                     m.on('click', () => { window.dashboard.showDetail(d); });
                     window.mapLogic.layers.push(m);
                 });
@@ -725,34 +659,19 @@
             renderAnalytics: () => {
                 const ctx = document.getElementById('chart-type').getContext('2d');
                 if (state.charts.types) state.charts.types.destroy();
-
                 const counts = { Trade: 0, Migration: 0, Colonialism: 0 };
                 state.data.forEach(d => {
                     const type = d.connection_type ? d.connection_type.trim() : 'Trade';
                     if (counts[type] !== undefined) counts[type]++;
                     else counts['Trade']++; 
                 });
-
                 state.charts.types = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: ['Trade', 'Migration', 'Colonialism'],
-                        datasets: [{
-                            data: [counts.Trade, counts.Migration, counts.Colonialism],
-                            backgroundColor: ['#d4af37', '#ff1b2d', '#1a1a2e'], /* Gold, Red, Navy */
-                            borderWidth: 0,
-                            hoverOffset: 10
-                        }]
+                        datasets: [{ data: [counts.Trade, counts.Migration, counts.Colonialism], backgroundColor: ['#d4af37', '#ff1b2d', '#1a1a2e'], borderWidth: 0, hoverOffset: 10 }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, font: { family: "'Helvetica', sans-serif", size: 11, weight: 'bold' }, padding: 15 } }
-                        },
-                        cutout: '70%',
-                        layout: { padding: 10 }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, font: { family: "'Helvetica', sans-serif", size: 11, weight: 'bold' }, padding: 15 } } }, cutout: '70%', layout: { padding: 10 } }
                 });
             },
             renderFeed: () => {
@@ -762,29 +681,12 @@
                 const start = (state.pagination.page - 1) * state.pagination.limit;
                 const end = start + state.pagination.limit;
                 const pageData = filtered.slice().reverse().slice(start, end);
-
                 pageData.forEach(d => {
                     let img = d.image_url ? d.image_url.split(',')[0] : null;
                     const card = document.createElement('div');
                     card.className = 'mobile-card p-4 flex items-center gap-4 active:bg-gray-50';
                     card.onclick = () => window.dashboard.showDetail(d);
-                    
-                    // REVISED CARD UI
-                    card.innerHTML = `
-                        <div class="w-14 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-sm relative group-hover:shadow-md transition-all">
-                            ${img ? `<img src="${img}" class="w-full h-full object-cover" onerror="handleImageError(this)">` : `<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>`}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-gray-800 text-sm truncate mb-1">${d.food_name}</h4>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] text-gray-500 font-medium flex items-center bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
-                                    <i class="fas fa-map-marker-alt text-opera-red mr-1.5"></i> ${d.country}
-                                </span>
-                                ${d.connection_type ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded border ${d.connection_type === 'Trade' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' : d.connection_type === 'Migration' ? 'bg-red-50 text-red-700 border-red-100' : 'bg-blue-50 text-blue-800 border-blue-100'} uppercase">${d.connection_type}</span>` : ''}
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-                    `;
+                    card.innerHTML = `<div class="w-14 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-sm relative group-hover:shadow-md transition-all">${img ? `<img src="${img}" class="w-full h-full object-cover" onerror="handleImageError(this)">` : `<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>`}</div><div class="flex-1 min-w-0"><h4 class="font-bold text-gray-800 text-sm truncate mb-1">${d.food_name}</h4><div class="flex items-center gap-2"><span class="text-[10px] text-gray-500 font-medium flex items-center bg-gray-50 px-2 py-0.5 rounded border border-gray-100"><i class="fas fa-map-marker-alt text-opera-red mr-1.5"></i> ${d.country}</span>${d.connection_type ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded border ${d.connection_type === 'Trade' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' : d.connection_type === 'Migration' ? 'bg-red-50 text-red-700 border-red-100' : 'bg-blue-50 text-blue-800 border-blue-100'} uppercase">${d.connection_type}</span>` : ''}</div></div><i class="fas fa-chevron-right text-gray-300 text-xs"></i>`;
                     container.appendChild(card);
                 });
                 document.getElementById('btn-load-more').style.display = end >= filtered.length ? 'none' : 'inline-block';
@@ -796,76 +698,11 @@
                 document.getElementById('dt-header-title').innerText = d.food_name;
                 const btnEdit = document.getElementById('btn-edit-entry');
                 if(state.role === 'admin') btnEdit.classList.remove('hidden'); else btnEdit.classList.add('hidden');
-
                 const container = document.getElementById('detail-container');
                 let imagesHtml = '';
-                if(d.image_url) {
-                    const urls = d.image_url.split(',');
-                    imagesHtml = `<div class="flex overflow-x-auto gap-3 p-4 snap-x no-scrollbar">${urls.map(u => `<img src="${u.trim()}" class="snap-center w-72 h-56 object-cover rounded-2xl border border-gray-100 shadow-md" onerror="this.style.display='none'">`).join('')}</div>`;
-                }
-
+                if(d.image_url) { const urls = d.image_url.split(','); imagesHtml = `<div class="flex overflow-x-auto gap-3 p-4 snap-x no-scrollbar">${urls.map(u => `<img src="${u.trim()}" class="snap-center w-72 h-56 object-cover rounded-2xl border border-gray-100 shadow-md" onerror="this.style.display='none'">`).join('')}</div>`; }
                 const videoHtml = extractYoutubeCarousel(d.youtube_url);
-
-                container.innerHTML = `
-                    ${imagesHtml}
-                    <div class="px-5 pb-8">
-                        <div class="flex justify-between items-start mb-2">
-                            <h1 class="text-3xl font-black text-opera-midnight leading-tight tracking-tight flex-1">${d.food_name}</h1>
-                            ${d.unesco_status ? `<div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center border border-green-200" title="UNESCO"><i class="fas fa-landmark text-green-600 text-xs"></i></div>` : ''}
-                        </div>
-                        
-                        <div class="flex items-center gap-2 mb-8">
-                            <span class="px-3 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider">${d.country}</span>
-                            ${d.connection_type ? `<span class="px-3 py-1 rounded-md ${d.connection_type==='Trade'?'bg-yellow-50 text-yellow-700':d.connection_type==='Migration'?'bg-red-50 text-red-700':'bg-blue-50 text-blue-800'} text-[10px] font-bold uppercase tracking-wider">${d.connection_type}</span>` : ''}
-                        </div>
-
-                        ${d.origin_food_name ? `
-                        <div class="bg-gray-50 rounded-2xl p-5 mb-8 border border-gray-100 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-20 h-20 bg-opera-gold/5 rounded-bl-full"></div>
-                            <div class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-4 text-center">Evolutionary Path</div>
-                            <div class="flex flex-col items-center gap-1 relative z-10">
-                                <div class="text-center">
-                                    <div class="font-bold text-gray-600 text-sm">${d.origin_food_name}</div>
-                                    <div class="text-[10px] text-gray-400 font-medium tracking-wide">${d.origin_country}</div>
-                                </div>
-                                <div class="h-6 w-0.5 bg-gray-300 my-1"></div>
-                                <div class="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center z-10 shadow-sm">
-                                    <i class="fas fa-arrow-down text-[10px] text-gray-400"></i>
-                                </div>
-                                <div class="h-6 w-0.5 bg-gray-300 my-1"></div>
-                                <div class="text-center">
-                                    <div class="font-black text-opera-red text-xl">${d.food_name}</div>
-                                    <div class="text-[10px] text-gray-500 font-medium tracking-wide">${d.country}</div>
-                                </div>
-                            </div>
-                        </div>` : ''}
-
-                        <div class="prose prose-sm text-gray-600 mb-8 leading-relaxed">
-                            <h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3 border-b border-gray-100 pb-2">Historical Narrative</h4>
-                            <p class="whitespace-pre-line text-sm">${d.description || 'No description provided.'}</p>
-                        </div>
-
-                        ${videoHtml}
-                        
-                        <div class="mb-6">
-                            <h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3">Distribution</h4>
-                            ${d.geometry_json ? `<div id="detail-geo-map" class="h-48 w-full bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden shadow-inner"></div>` : '<div class="text-xs text-gray-400 italic bg-gray-50 p-4 rounded-xl text-center">No distribution data available.</div>'}
-                        </div>
-
-                        <div class="mb-8">
-                            <h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3">Foodways Connection</h4>
-                            ${d.origin_lat ? `<div id="detail-conn-map" class="h-48 w-full bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden shadow-inner"></div>` : '<div class="text-xs text-gray-400 italic bg-gray-50 p-4 rounded-xl text-center">No origin data available.</div>'}
-                        </div>
-
-                        ${d.research_links ? `
-                        <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-50 mb-8">
-                            <h4 class="font-bold text-blue-900 text-[10px] uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-book"></i> Sources</h4>
-                            <div class="flex flex-col gap-3 text-xs text-blue-700">
-                                ${d.research_links.split(',').map(l => `<a href="${l}" target="_blank" class="flex items-center gap-2 truncate hover:underline"><i class="fas fa-external-link-alt text-[10px] opacity-50"></i> <span class="truncate">${l}</span></a>`).join('')}
-                            </div>
-                        </div>` : ''}
-                    </div>
-                `;
+                container.innerHTML = `${imagesHtml}<div class="px-5 pb-8"><div class="flex justify-between items-start mb-2"><h1 class="text-3xl font-black text-opera-midnight leading-tight tracking-tight flex-1">${d.food_name}</h1>${d.unesco_status ? `<div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center border border-green-200" title="UNESCO"><i class="fas fa-landmark text-green-600 text-xs"></i></div>` : ''}</div><div class="flex items-center gap-2 mb-8"><span class="px-3 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider">${d.country}</span>${d.connection_type ? `<span class="px-3 py-1 rounded-md ${d.connection_type==='Trade'?'bg-yellow-50 text-yellow-700':d.connection_type==='Migration'?'bg-red-50 text-red-700':'bg-blue-50 text-blue-800'} text-[10px] font-bold uppercase tracking-wider">${d.connection_type}</span>` : ''}</div>${d.origin_food_name ? `<div class="bg-gray-50 rounded-2xl p-5 mb-8 border border-gray-100 relative overflow-hidden"><div class="absolute top-0 right-0 w-20 h-20 bg-opera-gold/5 rounded-bl-full"></div><div class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-4 text-center">Evolutionary Path</div><div class="flex flex-col items-center gap-1 relative z-10"><div class="text-center"><div class="font-bold text-gray-600 text-sm">${d.origin_food_name}</div><div class="text-[10px] text-gray-400 font-medium tracking-wide">${d.origin_country}</div></div><div class="h-6 w-0.5 bg-gray-300 my-1"></div><div class="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center z-10 shadow-sm"><i class="fas fa-arrow-down text-[10px] text-gray-400"></i></div><div class="h-6 w-0.5 bg-gray-300 my-1"></div><div class="text-center"><div class="font-black text-opera-red text-xl">${d.food_name}</div><div class="text-[10px] text-gray-500 font-medium tracking-wide">${d.country}</div></div></div></div>` : ''}<div class="prose prose-sm text-gray-600 mb-8 leading-relaxed"><h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3 border-b border-gray-100 pb-2">Historical Narrative</h4><p class="whitespace-pre-line text-sm">${d.description || 'No description provided.'}</p></div>${videoHtml}<div class="mb-6"><h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3">Distribution</h4>${d.geometry_json ? `<div id="detail-geo-map" class="h-48 w-full bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden shadow-inner"></div>` : '<div class="text-xs text-gray-400 italic bg-gray-50 p-4 rounded-xl text-center">No distribution data available.</div>'}</div><div class="mb-8"><h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3">Foodways Connection</h4>${d.origin_lat ? `<div id="detail-conn-map" class="h-48 w-full bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden shadow-inner"></div>` : '<div class="text-xs text-gray-400 italic bg-gray-50 p-4 rounded-xl text-center">No origin data available.</div>'}</div>${d.research_links ? `<div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-50 mb-8"><h4 class="font-bold text-blue-900 text-[10px] uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-book"></i> Sources</h4><div class="flex flex-col gap-3 text-xs text-blue-700">${d.research_links.split(',').map(l => `<a href="${l}" target="_blank" class="flex items-center gap-2 truncate hover:underline"><i class="fas fa-external-link-alt text-[10px] opacity-50"></i> <span class="truncate">${l}</span></a>`).join('')}</div></div>` : ''}</div>`;
                 window.detailMaps.init(d);
             }
         };
@@ -879,13 +716,9 @@
             },
             enterApp: () => { document.getElementById('landing-page').classList.add('opacity-0'); setTimeout(() => { document.getElementById('landing-page').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); window.dashboard.renderKPI(); window.dashboard.renderFeed(); window.mapLogic.init(); window.mapLogic.render(); }, 500); },
             switchTab: (tab, el) => { 
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); 
-                el.classList.add('active'); 
-                document.getElementById('view-dashboard').classList.add('hidden'); 
-                document.getElementById('view-map').classList.add('hidden'); 
-                document.getElementById('view-profile').classList.add('hidden'); 
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); 
+                document.getElementById('view-dashboard').classList.add('hidden'); document.getElementById('view-map').classList.add('hidden'); document.getElementById('view-profile').classList.add('hidden'); 
                 document.getElementById('view-'+tab).classList.remove('hidden'); 
-                
                 if(tab === 'map') { setTimeout(() => window.mapLogic.map.invalidateSize(), 100); }
                 if(tab === 'profile') { setTimeout(() => window.dashboard.renderAnalytics(), 100); }
             },
@@ -896,34 +729,19 @@
             cancelPicker: () => { if(window.mapLogic.map && window.mapLogic.pickerCancel) { window.mapLogic.map.off('click', window.mapLogic.pickerCancel); document.getElementById('picker-ui').classList.add('hidden'); window.ui.openModal('input-modal'); } },
             login: () => { const u = document.getElementById('login-user').value; const p = document.getElementById('login-pass').value; const btn = document.getElementById('btn-login'); btn.innerText = 'Verifying...'; const form = new URLSearchParams(); form.append('action', 'login'); form.append('username', u); form.append('password', p); fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(d => { if(d.status === 'success') { state.role = 'admin'; document.getElementById('profile-role').innerText = 'Admin Access'; document.getElementById('btn-login-profile').classList.add('hidden'); document.getElementById('btn-logout-profile').classList.remove('hidden'); document.getElementById('header-add-btn').classList.remove('hidden'); window.ui.closeModal('login-modal'); } else { alert('Invalid Credentials'); } btn.innerText = 'Login'; }).catch(e => { alert('Network Error'); btn.innerText = 'Login'; }); },
             logout: () => { state.role = 'guest'; document.getElementById('profile-role').innerText = 'Guest User'; document.getElementById('btn-login-profile').classList.remove('hidden'); document.getElementById('btn-logout-profile').classList.add('hidden'); document.getElementById('header-add-btn').classList.add('hidden'); },
-            
             saveData: () => { 
                 const d = { id: state.editId || '', food_name: document.getElementById('inp-name').value, country: document.getElementById('inp-country').value, lat: document.getElementById('inp-lat').value, lng: document.getElementById('inp-lng').value, description: document.getElementById('inp-desc').value, origin_food_name: document.getElementById('inp-origin-name').value, origin_country: document.getElementById('inp-origin-country').value, origin_lat: document.getElementById('inp-origin-lat').value, origin_lng: document.getElementById('inp-origin-lng').value, connection_type: document.getElementById('inp-conn-type').value, image_url: document.getElementById('inp-image').value, youtube_url: document.getElementById('inp-youtube').value, unesco_status: document.getElementById('inp-unesco').value, research_links: document.getElementById('inp-research').value }; 
                 window.ui.showLoader(true); 
-                const action = state.editId ? 'update' : 'insert'; 
-                const form = new URLSearchParams(); 
-                form.append('action', action); 
-                form.append('data', JSON.stringify(d)); 
-                if (action === 'update' && state.currentDetail) { form.append('original_data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); } 
-                
-                fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { 
-                    window.ui.showLoader(false); 
-                    if(res.status === 'success') { 
-                        if (action === 'insert') { state.data.push({ ...d, id: 'temp-' + Date.now() }); } 
-                        else { const idx = state.data.findIndex(x => x.id === state.editId); if (idx > -1) state.data[idx] = { ...state.data[idx], ...d }; }
-                        window.dashboard.renderFeed(); window.mapLogic.render(); window.dashboard.renderKPI(); window.ui.closeModal('input-modal'); 
-                        if (action === 'update' && state.currentDetail && state.currentDetail.id === state.editId) { const updated = state.data.find(x => x.id === state.editId); if(updated) window.dashboard.showDetail(updated); }
-                    } else alert(res.message); 
-                }); 
+                const action = state.editId ? 'update' : 'insert'; const form = new URLSearchParams(); form.append('action', action); form.append('data', JSON.stringify(d)); if (action === 'update' && state.currentDetail) { form.append('original_data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); } 
+                fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { window.ui.showLoader(false); if(res.status === 'success') { if (action === 'insert') { state.data.push({ ...d, id: 'temp-' + Date.now() }); } else { const idx = state.data.findIndex(x => x.id === state.editId); if (idx > -1) state.data[idx] = { ...state.data[idx], ...d }; } window.dashboard.renderFeed(); window.mapLogic.render(); window.dashboard.renderKPI(); window.ui.closeModal('input-modal'); if (action === 'update' && state.currentDetail && state.currentDetail.id === state.editId) { const updated = state.data.find(x => x.id === state.editId); if(updated) window.dashboard.showDetail(updated); } } else alert(res.message); }); 
             },
             deleteData: () => { 
-                if(!confirm('Delete this entry?')) return; window.ui.showLoader(true); 
-                const form = new URLSearchParams(); form.append('action', 'delete'); form.append('id', state.editId); form.append('data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); 
+                if(!confirm('Delete this entry?')) return; window.ui.showLoader(true); const form = new URLSearchParams(); form.append('action', 'delete'); form.append('id', state.editId); form.append('data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); 
                 fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { window.ui.showLoader(false); if(res.status === 'success') { state.data = state.data.filter(x => x.id !== state.editId); window.dashboard.renderFeed(); window.mapLogic.render(); window.dashboard.renderKPI(); window.ui.closeModal('input-modal'); window.ui.closeModal('detail-modal'); } else alert(res.message); }); 
             },
             exportToPDF: async () => { 
                 const d = state.currentDetail; if(!d) return;
-                const btn = document.querySelector('button[onclick="app.exportToPDF()"]');
+                const btn = document.querySelector('button[onclick="window.app.exportToPDF()"]');
                 const oldContent = btn ? btn.innerHTML : '';
                 if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; }
                 try {
@@ -931,37 +749,9 @@
                     await new Promise(r => setTimeout(r, 500));
                     if (document.getElementById('detail-geo-map')) { try { geoMapImg = (await html2canvas(document.getElementById('detail-geo-map'), { useCORS: true, scale: 2 })).toDataURL('image/jpeg', 0.9); } catch(e){} }
                     if (document.getElementById('detail-conn-map')) { try { connMapImg = (await html2canvas(document.getElementById('detail-conn-map'), { useCORS: true, scale: 2 })).toDataURL('image/jpeg', 0.9); } catch(e){} }
-
                     const content = document.createElement('div');
                     content.style.width = '100%'; content.style.padding = '30px'; content.style.fontFamily = "'Helvetica', 'Arial', sans-serif"; content.style.color = '#1a1a2e'; content.style.background = '#fff';
-
-                    content.innerHTML = `
-                        <div style="border-bottom: 4px solid #ff1b2d; padding-bottom: 20px; margin-bottom: 30px;">
-                            <h1 style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1.2; color: #1a1a2e;">${d.food_name}</h1>
-                            <div style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #666;">
-                                <span style="color: #ff1b2d;">${d.country.toUpperCase()}</span>
-                                ${d.unesco_status ? ` • <span style="color: #047857;">UNESCO RECOGNIZED</span>` : ''}
-                            </div>
-                        </div>
-                        ${d.image_url ? `<div style="margin-bottom: 30px; display: flex; gap: 10px; height: 200px; overflow: hidden;">${d.image_url.split(',').slice(0,3).map(u => `<img src="${u.trim()}" style="flex: 1; height: 100%; object-fit: cover; border-radius: 8px;" crossorigin="anonymous" onerror="this.style.display='none'">`).join('')}</div>` : ''}
-                        ${d.origin_food_name ? `
-                        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #d4af37;">
-                            <h3 style="font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin: 0 0 10px 0;">Heritage Lineage</h3>
-                            <div style="font-size: 16px; font-weight: bold;">${d.origin_food_name} <span style="font-weight: normal; font-size: 14px; color: #666;">(${d.origin_country})</span></div>
-                            <div style="color: #d4af37; font-size: 20px; margin: 5px 0;">↓ <span style="font-size: 12px; font-weight: bold; color: #d4af37; vertical-align: middle; text-transform: uppercase;">${d.connection_type}</span></div>
-                            <div style="font-size: 16px; font-weight: bold; color: #ff1b2d;">${d.food_name}</div>
-                        </div>` : ''}
-                        <div style="margin-bottom: 30px;">
-                            <h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Historical Narrative</h3>
-                            <p style="font-size: 12px; line-height: 1.8; text-align: justify;">${d.description || 'No description available.'}</p>
-                        </div>
-                        ${geoMapImg || connMapImg ? `<div style="page-break-inside: avoid;">
-                            ${geoMapImg ? `<div style="margin-bottom: 20px;"><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Geographic Distribution</h4><img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}
-                            ${connMapImg ? `<div><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Cultural Connections</h4><img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}
-                        </div>` : ''}
-                        <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">Generated by Foodways Mobile • Shared Heritage Project</div>
-                    `;
-
+                    content.innerHTML = `<div style="border-bottom: 4px solid #ff1b2d; padding-bottom: 20px; margin-bottom: 30px;"><h1 style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1.2; color: #1a1a2e;">${d.food_name}</h1><div style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #666;"><span style="color: #ff1b2d;">${d.country.toUpperCase()}</span>${d.unesco_status ? ` • <span style="color: #047857;">UNESCO RECOGNIZED</span>` : ''}</div></div>${d.image_url ? `<div style="margin-bottom: 30px; display: flex; gap: 10px; height: 200px; overflow: hidden;">${d.image_url.split(',').slice(0,3).map(u => `<img src="${u.trim()}" style="flex: 1; height: 100%; object-fit: cover; border-radius: 8px;" crossorigin="anonymous" onerror="this.style.display='none'">`).join('')}</div>` : ''}${d.origin_food_name ? `<div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #d4af37;"><h3 style="font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin: 0 0 10px 0;">Heritage Lineage</h3><div style="font-size: 16px; font-weight: bold;">${d.origin_food_name} <span style="font-weight: normal; font-size: 14px; color: #666;">(${d.origin_country})</span></div><div style="color: #d4af37; font-size: 20px; margin: 5px 0;">↓ <span style="font-size: 12px; font-weight: bold; color: #d4af37; vertical-align: middle; text-transform: uppercase;">${d.connection_type}</span></div><div style="font-size: 16px; font-weight: bold; color: #ff1b2d;">${d.food_name}</div></div>` : ''}<div style="margin-bottom: 30px;"><h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Historical Narrative</h3><p style="font-size: 12px; line-height: 1.8; text-align: justify;">${d.description || 'No description available.'}</p></div>${geoMapImg || connMapImg ? `<div style="page-break-inside: avoid;">${geoMapImg ? `<div style="margin-bottom: 20px;"><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Geographic Distribution</h4><img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}${connMapImg ? `<div><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Cultural Connections</h4><img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}</div>` : ''}<div style="margin-top: 40px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">Generated by Foodways Mobile • Shared Heritage Project</div>`;
                     await html2pdf().set({ margin: 15, filename: `${d.food_name}_Profile.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(content).save();
                 } catch(e) { console.error(e); alert("PDF Generation Failed"); } finally { if(btn) { btn.disabled = false; btn.innerHTML = oldContent; } }
             }
@@ -969,7 +759,11 @@
 
         window.addEventListener('load', () => {
             if (typeof Papa !== 'undefined') {
-                window.app.init();
+                if(window.app && typeof window.app.init === 'function') {
+                    window.app.init();
+                } else {
+                    console.error("App object not initialized correctly");
+                }
             } else {
                 console.error('PapaParse library failed to load.');
                 document.getElementById('loading-indicator').innerHTML = '<span class="text-xs text-red-400 font-mono">Library Load Error. Refresh.</span>';
