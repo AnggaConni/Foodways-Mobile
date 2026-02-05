@@ -83,7 +83,7 @@
             justify-content: space-around;
             align-items: center;
             height: calc(60px + var(--safe-bottom));
-            z-index: 1000;
+            z-index: 4000; /* Lower than Modal, Higher than Map */
             box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
         }
         .nav-item {
@@ -143,8 +143,8 @@
 </head>
 <body>
 
-    <!-- 1. LANDING PAGE -->
-    <div id="landing-page" class="fixed inset-0 z-[5000] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500 overflow-hidden">
+    <!-- 1. LANDING PAGE (Z-60000) -->
+    <div id="landing-page" class="fixed inset-0 z-[60000] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500 overflow-hidden">
         <div id="landing-page-bg" class="absolute inset-0 z-0"></div>
         <div class="absolute inset-0 bg-[#1a1a2e]/80 z-0"></div>
 
@@ -175,8 +175,8 @@
     <!-- 2. MAIN APP LAYOUT -->
     <div id="main-app" class="h-full w-full relative hidden">
         
-        <!-- HEADER -->
-        <div class="fixed top-0 left-0 w-full bg-opera-midnight text-white border-b border-gray-800 z-40 px-4 h-14 flex items-center justify-between shadow-md">
+        <!-- HEADER (Z-4000) - Lower than Modals -->
+        <div class="fixed top-0 left-0 w-full bg-opera-midnight text-white border-b border-gray-800 z-[4000] px-4 h-14 flex items-center justify-between shadow-md">
             <div class="font-black text-lg tracking-tight flex items-center gap-2">
                 <i class="fas fa-pepper-hot text-opera-red"></i> Foodways
             </div>
@@ -190,8 +190,8 @@
             </div>
         </div>
 
-        <!-- SEARCH OVERLAY -->
-        <div id="search-overlay" class="fixed top-14 left-0 w-full bg-white border-b border-gray-100 p-2 z-30 hidden shadow-sm transition-all">
+        <!-- SEARCH OVERLAY (Z-4050) -->
+        <div id="search-overlay" class="fixed top-14 left-0 w-full bg-white border-b border-gray-100 p-2 z-[4050] hidden shadow-sm transition-all">
             <input type="text" id="global-search" placeholder="Search food, country..." class="w-full bg-gray-100 text-gray-800 text-sm rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-opera-gold/50" oninput="window.app.handleGlobalSearch(this.value)">
         </div>
 
@@ -228,12 +228,12 @@
         <!-- VIEW: MAP -->
         <div id="view-map" class="view-container pt-0 pb-[calc(60px+env(safe-area-inset-bottom))] hidden">
             <div id="map-container" class="w-full h-full bg-gray-200"></div>
-            <div class="absolute top-16 right-4 z-[400] flex flex-col gap-2">
+            <div class="absolute top-16 right-4 z-[300] flex flex-col gap-2">
                 <button onclick="window.mapLogic.resetZoom()" class="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-gray-700 active:bg-gray-50 border border-gray-100">
                     <i class="fas fa-compress-arrows-alt"></i>
                 </button>
             </div>
-            <div class="absolute bottom-20 left-4 z-[400] bg-white/95 backdrop-blur px-4 py-3 rounded-xl shadow-xl border border-gray-200 text-[10px] font-bold text-gray-600">
+            <div class="absolute bottom-20 left-4 z-[300] bg-white/95 backdrop-blur px-4 py-3 rounded-xl shadow-xl border border-gray-200 text-[10px] font-bold text-gray-600">
                 <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-opera-red ring-2 ring-red-100"></div> Local (Red)</div>
                 <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-opera-gold ring-2 ring-yellow-100"></div> Origin (Gold)</div>
             </div>
@@ -286,8 +286,8 @@
 
     <!-- 3. MODALS -->
 
-    <!-- DETAIL MODAL -->
-    <div id="detail-modal" class="fixed inset-0 z-[2000] bg-white hidden flex flex-col modal-enter">
+    <!-- DETAIL MODAL (Z-5000 - Higher than Header Z-4000) -->
+    <div id="detail-modal" class="fixed inset-0 z-[5000] bg-white hidden flex flex-col modal-enter">
         <div class="h-14 border-b border-gray-100 flex items-center justify-between px-4 bg-white/95 backdrop-blur-sm sticky top-0 z-10">
             <button onclick="window.ui.closeModal('detail-modal')" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-800 transition-colors">
                 <i class="fas fa-arrow-left"></i>
@@ -305,8 +305,8 @@
         <div id="detail-container" class="flex-1 overflow-y-auto pb-10 bg-white"></div>
     </div>
 
-    <!-- INPUT MODAL (Admin) -->
-    <div id="input-modal" class="fixed inset-0 z-[2100] bg-gray-50 hidden flex flex-col modal-enter">
+    <!-- INPUT MODAL (Admin) (Z-5100) -->
+    <div id="input-modal" class="fixed inset-0 z-[5100] bg-gray-50 hidden flex flex-col modal-enter">
         <div class="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 sticky top-0 z-10">
             <button onclick="window.ui.closeModal('input-modal')" class="text-gray-400 font-bold text-xs uppercase tracking-wide hover:text-gray-600">Cancel</button>
             <span class="font-bold text-opera-midnight" id="input-title">New Entry</span>
@@ -384,7 +384,7 @@
         </div>
     </div>
 
-    <!-- GEO EDITOR (Full Screen Overlay) -->
+    <!-- GEO EDITOR (Full Screen Overlay) (Z-6000) -->
     <div id="geo-editor" class="fixed inset-0 z-[6000] bg-white hidden flex flex-col">
         <!-- Editor Header -->
         <div class="h-14 bg-opera-midnight text-white flex items-center justify-between px-4 shadow-lg z-10">
@@ -404,8 +404,8 @@
         <div id="geo-map" class="flex-1 bg-gray-200"></div>
     </div>
 
-    <!-- LOGIN MODAL -->
-    <div id="login-modal" class="fixed inset-0 z-[3000] bg-opera-midnight/80 backdrop-blur-sm hidden flex items-center justify-center p-6">
+    <!-- LOGIN MODAL (Z-5500) -->
+    <div id="login-modal" class="fixed inset-0 z-[5500] bg-opera-midnight/80 backdrop-blur-sm hidden flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-opera-red"></div>
             <h3 class="text-2xl font-black text-opera-midnight mb-1 text-center">Admin Access</h3>
@@ -419,16 +419,16 @@
         </div>
     </div>
 
-    <!-- PICKER UI -->
-    <div id="picker-ui" class="fixed top-0 left-0 w-full z-[2050] hidden">
+    <!-- PICKER UI (Z-5050) -->
+    <div id="picker-ui" class="fixed top-0 left-0 w-full z-[5050] hidden">
         <div class="bg-white/90 backdrop-blur-md p-4 border-b border-gray-200 flex justify-between items-center shadow-lg">
             <span class="font-bold text-sm text-opera-red animate-pulse"><i class="fas fa-map-pin mr-1"></i> Tap Map Location</span>
             <button onclick="window.app.cancelPicker()" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-gray-600 hover:bg-gray-200">Cancel</button>
         </div>
     </div>
 
-    <!-- LOADER -->
-    <div id="crud-loader" class="fixed inset-0 z-[5000] bg-opera-midnight/50 backdrop-blur-sm hidden flex items-center justify-center">
+    <!-- LOADER (Z-70000) -->
+    <div id="crud-loader" class="fixed inset-0 z-[70000] bg-opera-midnight/50 backdrop-blur-sm hidden flex items-center justify-center">
         <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-3">
             <i class="fas fa-circle-notch fa-spin text-3xl text-opera-red"></i>
             <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Processing...</span>
@@ -447,6 +447,14 @@
             data: [], role: 'guest', editId: null, currentDetail: null,
             pagination: { page: 1, limit: 15 }, detailCache: {}, pickerTarget: null, filter: '',
             charts: {} 
+        };
+
+        // --- VALIDATOR HELPER (ULTRA STRICT) ---
+        const isValidStr = (s) => {
+            if (!s || typeof s !== 'string') return false;
+            const clean = s.trim().toLowerCase();
+            // Block generic placeholders too
+            return clean.length > 0 && clean !== 'null' && clean !== 'undefined' && clean !== '-' && clean !== 'nan' && clean !== '.';
         };
 
         // --- HELPER UNTUK YOUTUBE ---
@@ -482,7 +490,12 @@
                 
                 if(!window.geoEditor.map) {
                     window.geoEditor.map = L.map('geo-map', { zoomControl: false }).setView([20,0], 2);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(window.geoEditor.map);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { 
+                        noWrap: true,
+                        bounds: [[-90, -180], [90, 180]],
+                        maxBounds: [[-90, -180], [90, 180]],
+                        maxBoundsViscosity: 1.0
+                    }).addTo(window.geoEditor.map);
                     window.geoEditor.map.on('click', e => window.geoEditor.addPoint(e.latlng));
                 }
                 
@@ -567,7 +580,12 @@
             if (ghost._leaflet_id) { ghost._leaflet_id = null; }
             ghost.innerHTML = ''; 
             const map = L.map(ghostId, { zoomControl: false, attributionControl: false, fadeAnimation: false, zoomAnimation: false, preferCanvas: true });
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                noWrap: true,
+                bounds: [[-90, -180], [90, 180]],
+                maxBounds: [[-90, -180], [90, 180]],
+                maxBoundsViscosity: 1.0
+            }).addTo(map);
             const bounds = L.latLngBounds();
             
             if (type === 'geo') {
@@ -587,7 +605,7 @@
                 // 1. Build Children Map
                 const childrenMap = {};
                 state.data.forEach(item => {
-                    if(item.origin_food_name) {
+                    if(isValidStr(item.origin_food_name)) {
                         const pName = item.origin_food_name.toLowerCase().trim();
                         if(!childrenMap[pName]) childrenMap[pName] = [];
                         childrenMap[pName].push(item);
@@ -599,7 +617,7 @@
                 let curr = d;
                 const pathUp = new Set([d.id]);
                 
-                while(curr && curr.origin_food_name) {
+                while(curr && isValidStr(curr.origin_food_name)) {
                     const parentName = curr.origin_food_name;
                     const parentNode = state.data.find(n => n.food_name.toLowerCase().trim() === parentName.toLowerCase().trim());
                     rootName = parentName; 
@@ -641,7 +659,8 @@
                 let hasConnections = false;
 
                 uniqueNodes.forEach(node => {
-                    if(node.origin_lat && node.origin_lng && node.lat && node.lng) {
+                    // RULES IMPLEMENTED: Check for food_name AND origin_food_name existence using isValidStr helper
+                    if(node.origin_lat && node.origin_lng && node.lat && node.lng && isValidStr(node.origin_food_name) && isValidStr(node.food_name)) {
                         L.polyline([[node.origin_lat, node.origin_lng], [node.lat, node.lng]], { 
                             color: '#d4af37', 
                             weight: 2, 
@@ -742,7 +761,12 @@
                     // Peta Distribusi Area
                     if(document.getElementById('detail-geo-map')) {
                         const map1 = L.map('detail-geo-map', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false }).setView([d.lat, d.lng], 5);
-                        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map1);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                            noWrap: true,
+                            bounds: [[-90, -180], [90, 180]],
+                            maxBounds: [[-90, -180], [90, 180]],
+                            maxBoundsViscosity: 1.0
+                        }).addTo(map1);
                         if(d.geometry_json) {
                             try {
                                 const pts = JSON.parse(d.geometry_json);
@@ -756,12 +780,17 @@
                     // Peta Foodways Connection (Family Tree)
                     if(document.getElementById('detail-conn-map')) {
                         const map2 = L.map('detail-conn-map', { zoomControl: false, attributionControl: false, dragging: true, scrollWheelZoom: false }); 
-                        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map2);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                            noWrap: true,
+                            bounds: [[-90, -180], [90, 180]],
+                            maxBounds: [[-90, -180], [90, 180]],
+                            maxBoundsViscosity: 1.0
+                        }).addTo(map2);
                         
                         // 1. Persiapan Data Keluarga
                         const childrenMap = {};
                         state.data.forEach(item => {
-                            if(item.origin_food_name) {
+                            if(isValidStr(item.origin_food_name)) {
                                 const pName = item.origin_food_name.toLowerCase().trim();
                                 if(!childrenMap[pName]) childrenMap[pName] = [];
                                 childrenMap[pName].push(item);
@@ -773,7 +802,7 @@
                         let curr = d;
                         const pathUp = new Set([d.id]);
                         
-                        while(curr && curr.origin_food_name) {
+                        while(curr && isValidStr(curr.origin_food_name)) {
                             const parentName = curr.origin_food_name;
                             const parentNode = state.data.find(n => n.food_name.toLowerCase().trim() === parentName.toLowerCase().trim());
                             rootName = parentName; 
@@ -818,8 +847,8 @@
                         let hasConnections = false;
 
                         uniqueNodes.forEach(node => {
-                            // Gambar Garis (Asal -> Tujuan)
-                            if(node.origin_lat && node.origin_lng && node.lat && node.lng) {
+                            // RULES IMPLEMENTED: Validasi ketat nama dan asal menggunakan helper isValidStr
+                            if(node.origin_lat && node.origin_lng && node.lat && node.lng && isValidStr(node.origin_food_name) && isValidStr(node.food_name)) {
                                 L.polyline([[node.origin_lat, node.origin_lng], [node.lat, node.lng]], { 
                                     color: '#d4af37', 
                                     weight: 2, 
@@ -877,21 +906,61 @@
             map: null, layers: [],
             init: () => {
                 window.mapLogic.map = L.map('map-container', { zoomControl: false, attributionControl: false }).setView([20, 0], 2);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(window.mapLogic.map);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    noWrap: true,
+                    bounds: [[-90, -180], [90, 180]],
+                    maxBounds: [[-90, -180], [90, 180]],
+                    maxBoundsViscosity: 1.0
+                }).addTo(window.mapLogic.map);
             },
             render: () => {
                 window.mapLogic.layers.forEach(l => window.mapLogic.map.removeLayer(l));
                 window.mapLogic.layers = [];
                 const filtered = state.filter ? state.data.filter(d => d.food_name.toLowerCase().includes(state.filter.toLowerCase()) || d.country.toLowerCase().includes(state.filter.toLowerCase())) : state.data;
                 filtered.forEach(d => {
-                    if(!d.lat || !d.lng) return;
-                    if(d.origin_lat && d.origin_lng) {
-                        const line = L.polyline([[d.origin_lat, d.origin_lng], [d.lat, d.lng]], { color: '#d4af37', weight: 1.5, opacity: 0.3, dashArray: '4, 6' }).addTo(window.mapLogic.map);
+                    // RULES: Must have destination coordinates
+                    if(d.lat == null || d.lng == null) return;
+
+                    // RULES: Check for VALID origin data (coords + name) using STRICT helper
+                    // If valid, DRAW LINE and DRAW ORIGIN DOT (Fix for "Tak Bernodes")
+                    // IMPORTANT: Also check for valid origin country to be robust
+                    if(d.origin_lat != null && d.origin_lng != null && isValidStr(d.origin_food_name) && isValidStr(d.food_name) && isValidStr(d.origin_country)) {
+                        
+                        // 1. Draw The Line
+                        const line = L.polyline([[d.origin_lat, d.origin_lng], [d.lat, d.lng]], { 
+                            color: '#d4af37', 
+                            weight: 1.5, 
+                            opacity: 0.3, 
+                            dashArray: '4, 6' 
+                        }).addTo(window.mapLogic.map);
                         window.mapLogic.layers.push(line);
+
+                        // 2. Draw The Origin Node (The "Ghost" Fix)
+                        const originNode = L.circleMarker([d.origin_lat, d.origin_lng], {
+                            color: '#d4af37',      // Gold border
+                            fillColor: '#fff',     // White fill
+                            fillOpacity: 1,
+                            radius: 3,             // Small radius
+                            weight: 1
+                        }).addTo(window.mapLogic.map);
+                        
+                        // Optional: Tooltip for origin
+                        originNode.bindTooltip(`Origin: ${d.origin_food_name}`, { direction: 'top', className: 'custom-tooltip' });
+                        window.mapLogic.layers.push(originNode);
                     }
-                    const m = L.circleMarker([d.lat, d.lng], { color: '#fff', fillColor: '#ff1b2d', fillOpacity: 1, radius: 6, weight: 2 }).addTo(window.mapLogic.map);
-                    m.on('click', () => { window.dashboard.showDetail(d); });
-                    window.mapLogic.layers.push(m);
+
+                    // Destination Node (Main Red Dot) - Only if food_name is valid
+                    if (isValidStr(d.food_name)) {
+                        const m = L.circleMarker([d.lat, d.lng], { 
+                            color: '#fff', 
+                            fillColor: '#ff1b2d', 
+                            fillOpacity: 1, 
+                            radius: 6, 
+                            weight: 2 
+                        }).addTo(window.mapLogic.map);
+                        m.on('click', () => { window.dashboard.showDetail(d); });
+                        window.mapLogic.layers.push(m);
+                    }
                 });
             },
             resetZoom: () => { window.mapLogic.map.setView([20,0], 2); },
