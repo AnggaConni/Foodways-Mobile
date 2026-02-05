@@ -426,24 +426,31 @@
                 <div class="mb-6">
                     <h4 class="font-bold text-gray-900 mb-3 px-4">Related Videos</h4>
                     <div class="flex overflow-x-auto gap-4 px-4 snap-x no-scrollbar pb-2">
-                        ${urls.map(url => {
+                        ${urls.map((url, index) => {
                             let id = null;
                             if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
                             else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1];
                             else if(url.includes('embed/')) id = url.split('embed/')[1];
                             
-                            // Using standard thumbnail maxresdefault or hqdefault
-                            const thumb = id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : null;
+                            // Menggunakan thumbnail kualitas tinggi
+                            const thumb = id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+                            const uniqueId = `yt-${id}-${index}`; // ID unik untuk setiap elemen
                             
                             return thumb ? `
-                                <a href="${url}" target="_blank" class="snap-center shrink-0 relative w-64 h-36 rounded-xl overflow-hidden shadow-md group border border-gray-200">
-                                    <img src="${thumb}" class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                                        <div class="w-10 h-10 bg-[var(--opera-red)] rounded-full flex items-center justify-center shadow-lg transform group-active:scale-95 transition">
-                                            <i class="fas fa-play text-white text-xs pl-0.5"></i>
+                                <div class="snap-center shrink-0 relative w-72 h-40 rounded-xl overflow-hidden shadow-md border border-gray-200 bg-black group">
+                                    <!-- Thumbnail Cover (Click-to-Play) -->
+                                    <div class="absolute inset-0 w-full h-full cursor-pointer z-10" 
+                                         onclick="this.remove(); document.getElementById('${uniqueId}').src='https://www.youtube.com/embed/${id}?autoplay=1&rel=0'">
+                                        <img src="${thumb}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition">
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg transition transform group-hover:scale-110">
+                                                <i class="fas fa-play text-white text-sm pl-1"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                </a>
+                                    <!-- Iframe (Awalnya kosong agar ringan, diisi saat diklik) -->
+                                    <iframe id="${uniqueId}" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
                             ` : '';
                         }).join('')}
                     </div>
