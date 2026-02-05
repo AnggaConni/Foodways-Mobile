@@ -442,6 +442,163 @@
             charts: {} 
         };
 
+        // ==========================================================
+        // GHOST MAP LOGIC (OFF-SCREEN RENDERING FOR PDF)
+        // ==========================================================
+        
+        // 1. Setup Wadah Hantu
+        const ghostId = 'ghost-map-container';
+        let ghost = document.getElementById(ghostId);
+        if (!ghost) {
+            ghost = document.createElement('div');
+            ghost.id = ghostId;
+            ghost.style.position = 'fixed';
+            ghost.style.left = '-9999px'; 
+            ghost.style.top = '0';
+            ghost.style.width = '800px'; // Resolusi Tinggi untuk PDF
+            ghost.style.height = '400px';
+            ghost.style.zIndex = '-9999';
+            document.body.appendChild(ghost);
+        }
+
+        // 2. Fungsi Snapshot Peta
+        const generateMapSnapshot = async (d, type) => {
+            // Cleanup previous
+            if (ghost._leaflet_id) { ghost._leaflet_id = null; }
+            ghost.innerHTML = ''; 
+
+            // Initialize Map (No Animations)
+            const map = L.map(ghostId, {
+                zoomControl: false, 
+                attributionControl: false,
+                fadeAnimation: false, 
+                zoomAnimation: false, 
+                preferCanvas: true
+            });
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+            const bounds = L.latLngBounds();
+            
+            // --- LOGIKA SPESIFIK BERDASARKAN TIPE ---
+            
+            if (type === 'geo') {
+                // Render Distribusi (Polygon)
+                map.setView([d.lat, d.lng], 5);
+                if(d.geometry_json) {
+                    try {
+                        const pts = JSON.parse(d.geometry_json);
+                        L.polygon(pts, {color:'#ff1b2d', fillOpacity:0.2}).addTo(map);
+                        map.fitBounds(pts, {padding:[50,50], animate: false});
+                    } catch(e){}
+                } else {
+                     L.circleMarker([d.lat, d.lng], { color: '#ff1b2d', radius: 5 }).addTo(map);
+                     map.setView([d.lat, d.lng], 5, { animate: false });
+                }
+
+            } else if (type === 'conn') {
+                // Render Koneksi (Family Tree) - Meniru logika detailMaps
+                // Kita perlu mereplikasi logika pencarian "Family" dari detailMaps di sini
+                // agar peta PDF akurat dengan peta interaktif
+                
+                let childrenMap = {};
+                // Build connection map once
+                state.data.forEach(item => {
+                    if(item.origin_food_name) {
+                        const pName = item.origin_food_name.toLowerCase().trim();
+                        if(!childrenMap[pName]) childrenMap[pName] = [];
+                        childrenMap[pName].push(item);
+                    }
+                });
+
+                let rootName = d.food_name;
+                let curr = d;
+                const pathUp = new Set([d.id]);
+                
+                // Cari Root
+                while(curr && curr.origin_food_name) {
+                    const parentName = curr.origin_food_name;
+                    const parentNode = state.data.find(n => n.food_name.toLowerCase().trim() === parentName.toLowerCase().trim());
+                    rootName = parentName; 
+                    if(parentNode) {
+                        if(pathUp.has(parentNode.id)) break; 
+                        pathUp.add(parentNode.id);
+                        curr = parentNode;
+                    } else { break; }
+                }
+
+                // Traverse Down
+                const familyNodes = [];
+                const queue = [rootName];
+                const visitedNames = new Set();
+                
+                while(queue.length > 0) {
+                    const pName = queue.shift();
+                    const lowerP = pName.toLowerCase().trim();
+                    if(visitedNames.has(lowerP)) continue;
+                    visitedNames.add(lowerP);
+                    const realNode = state.data.find(n => n.food_name.toLowerCase().trim() === lowerP);
+                    if(realNode) familyNodes.push(realNode);
+                    if(childrenMap[lowerP]) {
+                        childrenMap[lowerP].forEach(child => {
+                            familyNodes.push(child); 
+                            queue.push(child.food_name);
+                        });
+                    }
+                }
+
+                const uniqueNodes = Array.from(new Map(familyNodes.map(item => [item.id, item])).values());
+                if(!uniqueNodes.find(n => n.id === d.id)) uniqueNodes.push(d); 
+                
+                let hasConnections = false;
+                uniqueNodes.forEach(node => {
+                    // Draw Line
+                    if(node.origin_lat && node.origin_lng && node.lat && node.lng) {
+                         L.polyline([[node.origin_lat, node.origin_lng], [node.lat, node.lng]], { color: '#d4af37', weight: 3, opacity: 0.8, dashArray: '10, 10' }).addTo(map);
+                         L.circleMarker([node.origin_lat, node.origin_lng], { color: '#d4af37', fillColor: '#fff', fillOpacity: 1, radius: 4, weight: 2 }).addTo(map);
+                         bounds.extend([node.origin_lat, node.origin_lng]);
+                         hasConnections = true;
+                    }
+                    // Draw Node
+                    const isCurrent = node.id === d.id;
+                    L.circleMarker([node.lat, node.lng], { 
+                        color: isCurrent ? '#ff1b2d' : '#1a1a2e', 
+                        fillColor: isCurrent ? '#ff1b2d' : '#f3f4f6', 
+                        fillOpacity: 1, 
+                        radius: isCurrent ? 8 : 5, 
+                        weight: isCurrent ? 0 : 2 
+                    }).addTo(map);
+                    
+                    bounds.extend([node.lat, node.lng]);
+                });
+
+                if(hasConnections || uniqueNodes.length > 0) { 
+                    if(bounds.isValid()) map.fitBounds(bounds, {padding:[50,50], animate: false, maxZoom: 4}); 
+                    else map.setView([d.lat, d.lng], 4, { animate: false }); 
+                } else { 
+                    map.setView([d.lat, d.lng], 4, { animate: false }); 
+                    L.circleMarker([d.lat, d.lng], { color: '#ff1b2d', radius: 6 }).addTo(map); 
+                }
+            }
+
+            // --- END LOGIKA SPESIFIK ---
+
+            // Tunggu tiles loaded
+            await new Promise(r => setTimeout(r, 1200)); 
+
+            // Ambil Screenshot
+            const canvas = await html2canvas(ghost, { 
+                useCORS: true, 
+                allowTaint: true, 
+                logging: false, 
+                scale: 2 // Retina quality
+            });
+            
+            map.remove(); 
+            return canvas.toDataURL('image/png');
+        };
+        // ==========================================================
+
         function robustParse(val) {
             if (!val) return null;
             let str = String(val).trim();
@@ -744,14 +901,46 @@
                 const btn = document.querySelector('button[onclick="window.app.exportToPDF()"]');
                 const oldContent = btn ? btn.innerHTML : '';
                 if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; }
+                
                 try {
+                    // PANGGIL FUNGSI GHOST MAPPING DI SINI
+                    // Kita tidak lagi screenshot div yang ada di layar, tapi membuat baru
+                    
                     let geoMapImg = null, connMapImg = null;
-                    await new Promise(r => setTimeout(r, 500));
-                    if (document.getElementById('detail-geo-map')) { try { geoMapImg = (await html2canvas(document.getElementById('detail-geo-map'), { useCORS: true, scale: 2 })).toDataURL('image/jpeg', 0.9); } catch(e){} }
-                    if (document.getElementById('detail-conn-map')) { try { connMapImg = (await html2canvas(document.getElementById('detail-conn-map'), { useCORS: true, scale: 2 })).toDataURL('image/jpeg', 0.9); } catch(e){} }
+                    
+                    // Generate Geo Map (Jika ada geometry data)
+                    if(d.geometry_json || (d.lat && d.lng)) {
+                         geoMapImg = await generateMapSnapshot(d, 'geo');
+                    }
+                    
+                    // Generate Conn Map (Jika ada data origin)
+                    if(d.origin_lat || d.origin_food_name) {
+                         connMapImg = await generateMapSnapshot(d, 'conn');
+                    }
+
                     const content = document.createElement('div');
                     content.style.width = '100%'; content.style.padding = '30px'; content.style.fontFamily = "'Helvetica', 'Arial', sans-serif"; content.style.color = '#1a1a2e'; content.style.background = '#fff';
-                    content.innerHTML = `<div style="border-bottom: 4px solid #ff1b2d; padding-bottom: 20px; margin-bottom: 30px;"><h1 style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1.2; color: #1a1a2e;">${d.food_name}</h1><div style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #666;"><span style="color: #ff1b2d;">${d.country.toUpperCase()}</span>${d.unesco_status ? ` • <span style="color: #047857;">UNESCO RECOGNIZED</span>` : ''}</div></div>${d.image_url ? `<div style="margin-bottom: 30px; display: flex; gap: 10px; height: 200px; overflow: hidden;">${d.image_url.split(',').slice(0,3).map(u => `<img src="${u.trim()}" style="flex: 1; height: 100%; object-fit: cover; border-radius: 8px;" crossorigin="anonymous" onerror="this.style.display='none'">`).join('')}</div>` : ''}${d.origin_food_name ? `<div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #d4af37;"><h3 style="font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin: 0 0 10px 0;">Heritage Lineage</h3><div style="font-size: 16px; font-weight: bold;">${d.origin_food_name} <span style="font-weight: normal; font-size: 14px; color: #666;">(${d.origin_country})</span></div><div style="color: #d4af37; font-size: 20px; margin: 5px 0;">↓ <span style="font-size: 12px; font-weight: bold; color: #d4af37; vertical-align: middle; text-transform: uppercase;">${d.connection_type}</span></div><div style="font-size: 16px; font-weight: bold; color: #ff1b2d;">${d.food_name}</div></div>` : ''}<div style="margin-bottom: 30px;"><h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Historical Narrative</h3><p style="font-size: 12px; line-height: 1.8; text-align: justify;">${d.description || 'No description available.'}</p></div>${geoMapImg || connMapImg ? `<div style="page-break-inside: avoid;">${geoMapImg ? `<div style="margin-bottom: 20px;"><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Geographic Distribution</h4><img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}${connMapImg ? `<div><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Cultural Connections</h4><img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}</div>` : ''}<div style="margin-top: 40px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">Generated by Foodways Mobile • Shared Heritage Project</div>`;
+                    
+                    // Build HTML string
+                    content.innerHTML = `
+                        <div style="border-bottom: 4px solid #ff1b2d; padding-bottom: 20px; margin-bottom: 30px;">
+                            <h1 style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1.2; color: #1a1a2e;">${d.food_name}</h1>
+                            <div style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #666;">
+                                <span style="color: #ff1b2d;">${d.country.toUpperCase()}</span>${d.unesco_status ? ` • <span style="color: #047857;">UNESCO RECOGNIZED</span>` : ''}
+                            </div>
+                        </div>
+                        ${d.image_url ? `<div style="margin-bottom: 30px; display: flex; gap: 10px; height: 200px; overflow: hidden;">${d.image_url.split(',').slice(0,3).map(u => `<img src="${u.trim()}" style="flex: 1; height: 100%; object-fit: cover; border-radius: 8px;" crossorigin="anonymous" onerror="this.style.display='none'">`).join('')}</div>` : ''}
+                        ${d.origin_food_name ? `<div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #d4af37;"><h3 style="font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin: 0 0 10px 0;">Heritage Lineage</h3><div style="font-size: 16px; font-weight: bold;">${d.origin_food_name} <span style="font-weight: normal; font-size: 14px; color: #666;">(${d.origin_country})</span></div><div style="color: #d4af37; font-size: 20px; margin: 5px 0;">↓ <span style="font-size: 12px; font-weight: bold; color: #d4af37; vertical-align: middle; text-transform: uppercase;">${d.connection_type}</span></div><div style="font-size: 16px; font-weight: bold; color: #ff1b2d;">${d.food_name}</div></div>` : ''}
+                        <div style="margin-bottom: 30px;"><h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Historical Narrative</h3><p style="font-size: 12px; line-height: 1.8; text-align: justify;">${d.description || 'No description available.'}</p></div>
+                        
+                        <div style="page-break-inside: avoid;">
+                            ${geoMapImg ? `<div style="margin-bottom: 20px;"><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Geographic Distribution</h4><img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}
+                            ${connMapImg ? `<div><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Cultural Connections</h4><img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}
+                        </div>
+                        
+                        <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">Generated by Foodways Mobile • Shared Heritage Project</div>
+                    `;
+
                     await html2pdf().set({ margin: 15, filename: `${d.food_name}_Profile.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(content).save();
                 } catch(e) { console.error(e); alert("PDF Generation Failed"); } finally { if(btn) { btn.disabled = false; btn.innerHTML = oldContent; } }
             }
