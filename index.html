@@ -768,7 +768,177 @@
             logout: () => { state.role = 'guest'; document.getElementById('profile-role').innerText = 'Guest User'; document.getElementById('btn-login-profile').classList.remove('hidden'); document.getElementById('btn-logout-profile').classList.add('hidden'); document.getElementById('header-add-btn').classList.add('hidden'); },
             saveData: () => { const d = { id: state.editId || '', food_name: document.getElementById('inp-name').value, country: document.getElementById('inp-country').value, lat: document.getElementById('inp-lat').value, lng: document.getElementById('inp-lng').value, description: document.getElementById('inp-desc').value, origin_food_name: document.getElementById('inp-origin-name').value, origin_country: document.getElementById('inp-origin-country').value, origin_lat: document.getElementById('inp-origin-lat').value, origin_lng: document.getElementById('inp-origin-lng').value, connection_type: document.getElementById('inp-conn-type').value, image_url: document.getElementById('inp-image').value, youtube_url: document.getElementById('inp-youtube').value, unesco_status: document.getElementById('inp-unesco').value, research_links: document.getElementById('inp-research').value }; ui.showLoader(true); const action = state.editId ? 'update' : 'insert'; const form = new URLSearchParams(); form.append('action', action); form.append('data', JSON.stringify(d)); if (action === 'update' && state.currentDetail) { form.append('original_data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); } fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { ui.showLoader(false); if(res.status === 'success') { alert('Saved!'); location.reload(); } else alert(res.message); }); },
             deleteData: () => { if(!confirm('Delete this entry?')) return; ui.showLoader(true); const form = new URLSearchParams(); form.append('action', 'delete'); form.append('id', state.editId); form.append('data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { ui.showLoader(false); if(res.status === 'success') location.reload(); else alert(res.message); }); },
-            exportToPDF: async () => { alert("PDF export is heavy. Please wait..."); const d = state.currentDetail; const element = document.createElement('div'); element.innerHTML = `<h1>${d.food_name}</h1><p>${d.description}</p>`; await html2pdf().from(element).save(`${d.food_name}.pdf`); }
+            
+            // REVISI TOTAL: exportToPDF dengan Layout Mobile (Header, Column, Footer)
+            exportToPDF: async () => { 
+                const d = state.currentDetail;
+                if(!d) return;
+
+                // Indikator Loading di Tombol
+                const btn = document.querySelector('button[onclick="app.exportToPDF()"]');
+                const oldContent = btn ? btn.innerHTML : '';
+                if(btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+                }
+
+                try {
+                    // 1. CAPTURE PETA (Ambil screenshot peta yang sedang tampil)
+                    let geoMapImg = null;
+                    let connMapImg = null;
+                    
+                    // Tunggu sebentar agar render peta stabil
+                    await new Promise(r => setTimeout(r, 500));
+
+                    const geoMapEl = document.getElementById('detail-geo-map');
+                    if (geoMapEl) {
+                        try {
+                            const canvas = await html2canvas(geoMapEl, { useCORS: true, scale: 2 });
+                            geoMapImg = canvas.toDataURL('image/jpeg', 0.9);
+                        } catch(e) { console.warn('Gagal capture geo map', e); }
+                    }
+                    
+                    const connMapEl = document.getElementById('detail-conn-map');
+                    if (connMapEl) {
+                        try {
+                            const canvas = await html2canvas(connMapEl, { useCORS: true, scale: 2 });
+                            connMapImg = canvas.toDataURL('image/jpeg', 0.9);
+                        } catch(e) { console.warn('Gagal capture conn map', e); }
+                    }
+
+                    // 2. BANGUN KONTEN PDF (HTML Structure)
+                    const content = document.createElement('div');
+                    content.style.width = '100%';
+                    content.style.padding = '20px';
+                    content.style.fontFamily = "'Helvetica', 'Arial', sans-serif";
+                    content.style.color = '#333';
+                    content.style.background = '#fff';
+
+                    // --- HEADER ---
+                    let headerHtml = `
+                        <div style="border-bottom: 2px solid #ff1b2d; padding-bottom: 15px; margin-bottom: 20px;">
+                            <h1 style="font-size: 28px; font-weight: 900; margin: 0; line-height: 1.2; color: #000;">${d.food_name}</h1>
+                            <div style="margin-top: 8px; font-size: 12px; display: flex; gap: 5px;">
+                                <span style="background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #fecaca;">${d.country.toUpperCase()}</span>
+                                ${d.unesco_status ? `<span style="background: #ecfdf5; color: #047857; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #a7f3d0;">${d.unesco_status.toUpperCase()}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+
+                    // --- COLUMN CONTENT ---
+                    
+                    // A. Gambar (All Images)
+                    let imagesHtml = '';
+                    if (d.image_url) {
+                        const urls = d.image_url.split(',').filter(u => u.trim());
+                        imagesHtml = `
+                            <div style="margin-bottom: 25px;">
+                                <div style="display: flex; gap: 10px; overflow: hidden; flex-wrap: wrap;">
+                                    ${urls.map((u, i) => `<img src="${u.trim()}" style="height: ${i===0?'200px':'95px'}; flex: ${i===0?'100%':'1'}; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;" crossorigin="anonymous">`).join('')}
+                                </div>
+                            </div>`;
+                    }
+
+                    // B. Evolution Path
+                    let evolutionHtml = '';
+                    if (d.origin_food_name) {
+                        evolutionHtml = `
+                            <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px dashed #d1d5db; text-align: center;">
+                                <div style="font-size: 10px; font-weight: bold; color: #9ca3af; letter-spacing: 1px; margin-bottom: 15px;">EVOLUTION PATH</div>
+                                <div style="display: inline-block; text-align: center;">
+                                    <div style="font-weight: bold; font-size: 14px; color: #374151;">${d.origin_food_name}</div>
+                                    <div style="font-size: 10px; color: #6b7280;">(${d.origin_country})</div>
+                                </div>
+                                <div style="color: #f97316; font-size: 16px; margin: 5px 0;">↓</div>
+                                <div style="display: inline-block; background: #fff7ed; color: #c2410c; padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: bold; border: 1px solid #ffedd5;">${d.connection_type || 'MIGRATION'}</div>
+                                <div style="color: #f97316; font-size: 16px; margin: 5px 0;">↓</div>
+                                <div style="display: inline-block; text-align: center;">
+                                    <div style="font-weight: 900; font-size: 16px; color: #ff1b2d;">${d.food_name}</div>
+                                    <div style="font-size: 10px; color: #6b7280;">(${d.country})</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // C. History
+                    let historyHtml = `
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px; margin-bottom: 10px; color: #111;">History & Narrative</h3>
+                            <p style="font-size: 11px; line-height: 1.6; text-align: justify; color: #4b5563; white-space: pre-line;">${d.description || 'No historical description available.'}</p>
+                        </div>
+                    `;
+
+                    // D. Maps (Captured Images)
+                    let mapsHtml = '';
+                    if (geoMapImg || connMapImg) {
+                        mapsHtml = `<div style="page-break-inside: avoid;">`;
+                        if (geoMapImg) {
+                            mapsHtml += `
+                                <div style="margin-bottom: 15px;">
+                                    <h4 style="font-size: 11px; font-weight: bold; margin-bottom: 8px; color: #2563eb; display: flex; align-items: center;">
+                                        <span style="display:inline-block; width:8px; height:8px; background:#2563eb; margin-right:5px; border-radius:50%;"></span> Geographic Distribution
+                                    </h4>
+                                    <img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                </div>
+                            `;
+                        }
+                        if (connMapImg) {
+                            mapsHtml += `
+                                <div>
+                                    <h4 style="font-size: 11px; font-weight: bold; margin-bottom: 8px; color: #ea580c; display: flex; align-items: center;">
+                                        <span style="display:inline-block; width:8px; height:8px; background:#ea580c; margin-right:5px; border-radius:50%;"></span> Influence Map (Foodways)
+                                    </h4>
+                                    <img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                </div>
+                            `;
+                        }
+                        mapsHtml += `</div>`;
+                    }
+
+                    // --- FOOTER ---
+                    let footerHtml = '';
+                    if (d.research_links) {
+                        footerHtml = `
+                            <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; padding: 15px; border-radius: 8px;">
+                                <h4 style="font-size: 10px; font-weight: bold; color: #374151; margin-bottom: 8px; text-transform: uppercase;">Research Sources</h4>
+                                <ul style="margin: 0; padding-left: 15px; font-size: 9px; color: #2563eb; list-style-type: square;">
+                                    ${d.research_links.split(',').map(l => `<li style="margin-bottom: 4px; overflow-wrap: break-word;">${l.trim()}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    // Metadata Footer
+                    const metaFooter = `
+                        <div style="text-align: center; margin-top: 20px; font-size: 8px; color: #9ca3af;">
+                            Generated by Foodways Shared Heritage Project • ${new Date().toLocaleDateString()}
+                        </div>
+                    `;
+
+                    // GABUNGKAN SEMUA
+                    content.innerHTML = headerHtml + imagesHtml + evolutionHtml + historyHtml + mapsHtml + footerHtml + metaFooter;
+
+                    // 3. GENERATE PDF
+                    const opt = {
+                        margin:       10,
+                        filename:     `${d.food_name.replace(/\s+/g, '_')}_FullProfile.pdf`,
+                        image:        { type: 'jpeg', quality: 0.98 },
+                        html2canvas:  { scale: 2, useCORS: true, letterRendering: true }, // High Quality
+                        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+
+                    await html2pdf().set(opt).from(content).save();
+
+                } catch(e) {
+                    console.error(e);
+                    alert("Gagal membuat PDF. Coba lagi.");
+                } finally {
+                    if(btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = oldContent;
+                    }
+                }
+            }
         };
 
         app.init();
