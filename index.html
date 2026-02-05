@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#ff1b2d">
+    <meta name="theme-color" content="#1a1a2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Foodways Mobile</title>
@@ -21,16 +21,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        opera: {
+                            red: '#ff1b2d',
+                            midnight: '#1a1a2e', /* Dark Navy from palette */
+                            gold: '#d4af37',     /* Gold from palette */
+                            silver: '#f3f4f6',   /* Light Silver */
+                            text: '#333333'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         :root {
             --opera-red: #ff1b2d;
-            --opera-dark: #121212;
-            --opera-gray: #f9f9f9;
+            --opera-midnight: #1a1a2e;
+            --opera-gold: #d4af37;
+            --opera-bg: #f8f9fa;
             --safe-bottom: env(safe-area-inset-bottom);
         }
         
         body {
-            background-color: var(--opera-gray); 
+            background-color: var(--opera-bg); 
             color: #1a1a1a;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden; 
@@ -47,7 +66,7 @@
         .mobile-card {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             margin-bottom: 12px;
             border: 1px solid #f0f0f0;
             transition: transform 0.1s;
@@ -75,14 +94,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #999;
+            color: #9ca3af; /* Gray-400 */
             font-size: 10px;
-            font-weight: 500;
+            font-weight: 600;
             width: 100%;
             height: 100%;
+            transition: color 0.2s;
         }
         .nav-item i { font-size: 20px; margin-bottom: 4px; }
-        .nav-item.active { color: var(--opera-red); }
+        .nav-item.active { color: var(--opera-midnight); } /* Active is now Navy/Midnight */
 
         /* Full Screen Views */
         .view-container {
@@ -90,7 +110,7 @@
             width: 100%;
             overflow-y: auto;
             padding-bottom: calc(70px + var(--safe-bottom)); /* Space for bottom nav */
-            background: var(--opera-gray);
+            background: var(--opera-bg);
         }
 
         /* Leaflet Tweaks */
@@ -108,19 +128,18 @@
         .modal-enter { transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .modal-active { transform: translateY(0); }
         
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 6px;
-        }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
         /* Title Screen Background */
         #landing-page-bg {
             background-image: url('https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); /* Korean Chicken */
             background-size: cover;
             background-position: center;
+        }
+        
+        /* Premium Gradient Text */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #d4af37, #f3c246);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
     </style>
@@ -128,48 +147,50 @@
 <body>
 
     <!-- 1. LANDING PAGE (Splash Screen) -->
-    <!-- Added ID for background image and overlay -->
     <div id="landing-page" class="fixed inset-0 z-[5000] flex flex-col items-center justify-center p-6 text-center transition-opacity duration-500 overflow-hidden">
         
         <!-- Background Image Container -->
         <div id="landing-page-bg" class="absolute inset-0 z-0"></div>
-        <!-- Dark Overlay for Readability -->
-        <div class="absolute inset-0 bg-black/60 z-0"></div>
+        <!-- Dark Overlay (Navy Tint) -->
+        <div class="absolute inset-0 bg-[#1a1a2e]/80 z-0"></div>
 
         <div class="mb-6 relative z-10">
             <div class="absolute inset-0 bg-red-600 rounded-full animate-ping opacity-50"></div>
-            <div class="w-24 h-24 bg-white border-4 border-red-500 rounded-full flex items-center justify-center relative z-10 shadow-lg">
-                <i class="fas fa-pepper-hot text-4xl text-[var(--opera-red)]"></i>
+            <div class="w-24 h-24 bg-white border-4 border-white rounded-full flex items-center justify-center relative z-10 shadow-2xl">
+                <i class="fas fa-pepper-hot text-4xl text-opera-red"></i>
             </div>
         </div>
-        <h1 class="text-4xl font-black text-white mb-2 relative z-10 drop-shadow-md">Foodways</h1>
-        <p class="text-sm text-gray-200 uppercase tracking-widest mb-8 relative z-10 drop-shadow-sm">Shared Heritage</p>
+        <h1 class="text-5xl font-black text-white mb-2 relative z-10 drop-shadow-lg tracking-tight">Foodways</h1>
+        <p class="text-sm text-opera-gold uppercase tracking-[0.3em] font-bold mb-10 relative z-10 drop-shadow-sm">Shared Heritage</p>
         
-        <div id="loading-indicator" class="flex flex-col items-center relative z-10">
-            <i class="fas fa-circle-notch fa-spin text-red-500 text-2xl mb-3"></i>
-            <span class="text-xs text-gray-300 font-mono">Syncing Database...</span>
+        <div id="loading-indicator" class="flex flex-col items-center relative z-10 mb-8">
+            <div class="w-12 h-1 bg-white/20 rounded-full overflow-hidden">
+                <div class="h-full bg-opera-gold animate-[loading_1s_ease-in-out_infinite]" style="width: 50%"></div>
+            </div>
+            <span class="text-[10px] text-gray-300 font-medium mt-2 uppercase tracking-wider">Syncing Database...</span>
         </div>
+        <style>@keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }</style>
 
-        <button id="btn-enter" onclick="app.enterApp()" class="hidden w-full max-w-xs bg-[var(--opera-red)] text-white font-bold py-4 rounded-full shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-2 relative z-10 border border-red-400">
-            Start Exploring <i class="fas fa-arrow-right"></i>
+        <button id="btn-enter" onclick="app.enterApp()" class="hidden w-full max-w-xs bg-opera-red text-white font-bold py-4 rounded-xl shadow-xl shadow-red-900/30 active:scale-95 transition-transform flex items-center justify-center gap-2 relative z-10 border-t border-white/20">
+            Start Exploring <i class="fas fa-arrow-right ml-1"></i>
         </button>
         
-        <div onclick="ui.openModal('login-modal')" class="absolute bottom-10 text-xs text-white/50 p-4 cursor-pointer z-10 hover:text-white transition-colors">Admin Access</div>
+        <div onclick="ui.openModal('login-modal')" class="absolute bottom-8 text-[10px] text-white/30 font-bold uppercase tracking-widest p-4 cursor-pointer z-10 hover:text-white transition-colors">Admin Access</div>
     </div>
 
     <!-- 2. MAIN APP LAYOUT -->
     <div id="main-app" class="h-full w-full relative hidden">
         
-        <!-- HEADER (Sticky Top) -->
-        <div class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-100 z-40 px-4 h-14 flex items-center justify-between">
-            <div class="font-black text-lg tracking-tight text-gray-800 flex items-center gap-2">
-                <i class="fas fa-pepper-hot text-[var(--opera-red)]"></i> Foodways
+        <!-- HEADER (Sticky Top) - REVISED: Midnight Blue -->
+        <div class="fixed top-0 left-0 w-full bg-opera-midnight text-white border-b border-gray-800 z-40 px-4 h-14 flex items-center justify-between shadow-md">
+            <div class="font-black text-lg tracking-tight flex items-center gap-2">
+                <i class="fas fa-pepper-hot text-opera-red"></i> Foodways
             </div>
             <div class="flex gap-3">
-                <button onclick="ui.toggleSearch()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 active:bg-gray-200">
+                <button onclick="ui.toggleSearch()" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
                     <i class="fas fa-search text-xs"></i>
                 </button>
-                <button id="header-add-btn" onclick="app.initiateAddEntry()" class="hidden w-8 h-8 bg-red-50 text-red-500 rounded-full flex items-center justify-center active:bg-red-100">
+                <button id="header-add-btn" onclick="app.initiateAddEntry()" class="hidden w-8 h-8 bg-opera-red text-white rounded-full flex items-center justify-center active:scale-95 shadow-lg shadow-red-900/50">
                     <i class="fas fa-plus text-xs"></i>
                 </button>
             </div>
@@ -177,32 +198,38 @@
 
         <!-- SEARCH OVERLAY -->
         <div id="search-overlay" class="fixed top-14 left-0 w-full bg-white border-b border-gray-100 p-2 z-30 hidden shadow-sm transition-all">
-            <input type="text" id="global-search" placeholder="Search food, country..." class="w-full bg-gray-100 text-gray-800 text-sm rounded-lg px-4 py-3 outline-none" oninput="app.handleGlobalSearch(this.value)">
+            <input type="text" id="global-search" placeholder="Search food, country..." class="w-full bg-gray-100 text-gray-800 text-sm rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-opera-gold/50" oninput="app.handleGlobalSearch(this.value)">
         </div>
 
         <!-- VIEW: DASHBOARD (FEED) -->
-        <div id="view-dashboard" class="view-container pt-16 px-4">
+        <div id="view-dashboard" class="view-container pt-18 px-4">
+            <div class="h-4"></div>
             
             <!-- KPI Grid -->
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="text-xs text-gray-400 uppercase font-bold">Total Foods</div>
-                    <div class="text-2xl font-black text-gray-800" id="kpi-total">0</div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-opera-red/5 rounded-bl-full -mr-2 -mt-2 transition-transform group-hover:scale-110"></div>
+                    <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Total Foods</div>
+                    <div class="text-3xl font-black text-opera-midnight mt-1" id="kpi-total">0</div>
                 </div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="text-xs text-gray-400 uppercase font-bold">Countries</div>
-                    <div class="text-2xl font-black text-blue-600" id="kpi-countries">0</div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-opera-gold/10 rounded-bl-full -mr-2 -mt-2 transition-transform group-hover:scale-110"></div>
+                    <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Countries</div>
+                    <div class="text-3xl font-black text-opera-gold mt-1" id="kpi-countries">0</div>
                 </div>
             </div>
 
             <!-- List Header -->
-            <h3 class="font-bold text-gray-800 text-sm mb-3 uppercase tracking-wide">Recent Entries</h3>
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold text-gray-800 text-sm uppercase tracking-wide">Recent Entries</h3>
+                <span class="text-[10px] bg-opera-midnight text-white px-2 py-0.5 rounded font-bold">LIVE</span>
+            </div>
             
             <!-- Card Feed -->
             <div id="card-feed" class="pb-4"></div>
             
             <div class="text-center py-4">
-                <button id="btn-load-more" class="text-xs font-bold text-gray-400 bg-gray-200 px-4 py-2 rounded-full" onclick="dashboard.loadMore()">Load More</button>
+                <button id="btn-load-more" class="text-xs font-bold text-opera-midnight bg-gray-200 px-6 py-3 rounded-full hover:bg-gray-300 transition-colors" onclick="dashboard.loadMore()">Load More</button>
             </div>
         </div>
 
@@ -212,41 +239,49 @@
             
             <!-- Map Controls -->
             <div class="absolute top-16 right-4 z-[400] flex flex-col gap-2">
-                <button onclick="mapLogic.resetZoom()" class="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-gray-700 active:bg-gray-50">
+                <button onclick="mapLogic.resetZoom()" class="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-gray-700 active:bg-gray-50 border border-gray-100">
                     <i class="fas fa-compress-arrows-alt"></i>
                 </button>
             </div>
             
             <!-- Simple Legend -->
-            <div class="absolute bottom-20 left-4 z-[400] bg-white/90 backdrop-blur px-3 py-2 rounded-lg shadow-lg border border-gray-200 text-[10px] font-bold text-gray-600">
-                <div class="flex items-center gap-2 mb-1"><div class="w-2 h-2 rounded-full bg-[var(--opera-red)]"></div> Local (Red)</div>
-                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-orange-400"></div> Origin (Orange)</div>
+            <div class="absolute bottom-20 left-4 z-[400] bg-white/95 backdrop-blur px-4 py-3 rounded-xl shadow-xl border border-gray-200 text-[10px] font-bold text-gray-600">
+                <div class="flex items-center gap-2 mb-2"><div class="w-2 h-2 rounded-full bg-opera-red ring-2 ring-red-100"></div> Local (Red)</div>
+                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-opera-gold ring-2 ring-yellow-100"></div> Origin (Gold)</div>
             </div>
         </div>
 
         <!-- VIEW: PROFILE (Simple Stats/Admin) -->
-        <div id="view-profile" class="view-container pt-16 px-4 hidden">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6 text-center">
-                <div class="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl">👤</div>
-                <h2 class="font-bold text-lg" id="profile-role">Guest User</h2>
-                <button id="btn-login-profile" onclick="ui.openModal('login-modal')" class="text-xs text-[var(--opera-red)] font-bold mt-1">Login as Admin</button>
-                <button id="btn-logout-profile" onclick="app.logout()" class="hidden text-xs text-gray-400 font-bold mt-1">Logout</button>
+        <div id="view-profile" class="view-container pt-18 px-4 hidden">
+            <div class="h-4"></div>
+            <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-6 text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-opera-midnight via-opera-red to-opera-gold"></div>
+                <div class="w-20 h-20 bg-gray-50 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl border-4 border-white shadow-lg">👤</div>
+                <h2 class="font-black text-xl text-opera-midnight" id="profile-role">Guest User</h2>
+                <div class="mt-4 flex justify-center gap-2">
+                    <button id="btn-login-profile" onclick="ui.openModal('login-modal')" class="text-xs bg-opera-red text-white px-4 py-2 rounded-full font-bold shadow-lg shadow-red-200">Login Admin</button>
+                    <button id="btn-logout-profile" onclick="app.logout()" class="hidden text-xs bg-gray-200 text-gray-600 px-4 py-2 rounded-full font-bold">Logout</button>
+                </div>
             </div>
 
-            <h3 class="font-bold text-gray-800 text-sm mb-3 uppercase tracking-wide border-b pb-2">Interaction Types</h3>
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6 flex items-center justify-center relative">
-                <!-- CHART CANVAS -->
+            <h3 class="font-bold text-gray-800 text-sm mb-4 uppercase tracking-wide flex items-center gap-2">
+                <span class="w-1 h-4 bg-opera-gold rounded-full"></span> Interaction Types
+            </h3>
+            
+            <!-- CHART CONTAINER with Revised Colors -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6 flex items-center justify-center relative">
                 <div class="w-full h-64 relative">
                     <canvas id="chart-type"></canvas>
                 </div>
             </div>
             
-            <button onclick="app.exportData()" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 active:bg-black mb-10">
-                <i class="fas fa-file-csv"></i> Download Dataset
+            <!-- Primary Action Button (Navy) -->
+            <button onclick="app.exportData()" class="w-full bg-opera-midnight text-white font-bold py-4 rounded-xl text-sm flex items-center justify-center gap-3 active:scale-95 transition-transform mb-10 shadow-xl shadow-blue-900/20">
+                <i class="fas fa-file-csv text-opera-gold"></i> Download Dataset
             </button>
         </div>
 
-        <!-- BOTTOM NAVIGATION -->
+        <!-- BOTTOM NAVIGATION - REVISED -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="app.switchTab('dashboard', this)">
                 <i class="fas fa-home"></i>
@@ -257,8 +292,8 @@
                 <span>Map</span>
             </div>
             <div class="nav-item" onclick="app.switchTab('profile', this)">
-                <i class="fas fa-user-circle"></i>
-                <span>Profile</span>
+                <i class="fas fa-chart-pie"></i>
+                <span>Analytics</span>
             </div>
         </div>
 
@@ -269,16 +304,16 @@
     <!-- DETAIL MODAL -->
     <div id="detail-modal" class="fixed inset-0 z-[2000] bg-white hidden flex flex-col modal-enter">
         <div class="h-14 border-b border-gray-100 flex items-center justify-between px-4 bg-white/95 backdrop-blur-sm sticky top-0 z-10">
-            <button onclick="ui.closeModal('detail-modal')" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+            <button onclick="ui.closeModal('detail-modal')" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-800 transition-colors">
                 <i class="fas fa-arrow-left"></i>
             </button>
-            <span class="font-bold text-sm truncate w-40 text-center" id="dt-header-title">Detail</span>
+            <span class="font-bold text-sm truncate w-40 text-center text-opera-midnight" id="dt-header-title">Detail</span>
             <div class="flex gap-2">
-                <button onclick="app.exportToPDF()" class="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
-                    <i class="fas fa-file-pdf"></i>
+                <button onclick="app.exportToPDF()" class="w-8 h-8 rounded-full bg-opera-midnight text-white flex items-center justify-center hover:bg-gray-800 transition-colors shadow-lg shadow-blue-900/20">
+                    <i class="fas fa-file-pdf text-xs"></i>
                 </button>
-                <button id="btn-edit-entry" onclick="app.openInputModal('edit')" class="hidden w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-                    <i class="fas fa-pen"></i>
+                <button id="btn-edit-entry" onclick="app.openInputModal('edit')" class="hidden w-8 h-8 rounded-full bg-opera-red text-white flex items-center justify-center shadow-lg shadow-red-500/30">
+                    <i class="fas fa-pen text-xs"></i>
                 </button>
             </div>
         </div>
@@ -292,89 +327,103 @@
     <!-- INPUT MODAL (Admin) -->
     <div id="input-modal" class="fixed inset-0 z-[2100] bg-gray-50 hidden flex flex-col modal-enter">
         <div class="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 sticky top-0 z-10">
-            <button onclick="ui.closeModal('input-modal')" class="text-gray-500 font-bold text-sm">Cancel</button>
-            <span class="font-bold" id="input-title">New Entry</span>
-            <button onclick="app.saveData()" id="btn-save" class="text-[var(--opera-red)] font-bold text-sm">Save</button>
+            <button onclick="ui.closeModal('input-modal')" class="text-gray-400 font-bold text-xs uppercase tracking-wide hover:text-gray-600">Cancel</button>
+            <span class="font-bold text-opera-midnight" id="input-title">New Entry</span>
+            <button onclick="app.saveData()" id="btn-save" class="bg-opera-midnight text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-lg shadow-blue-900/20">Save</button>
         </div>
         
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
             <input type="hidden" id="inp-id">
             
-            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3">
-                <h4 class="text-xs font-bold text-gray-400 uppercase">Basic Info</h4>
-                <input type="text" id="inp-name" placeholder="Food Name" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm font-bold">
-                <input type="text" id="inp-country" placeholder="Country" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b pb-2">Basic Info</h4>
+                <input type="text" id="inp-name" placeholder="Food Name" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm font-bold focus:ring-2 focus:ring-opera-red/20 outline-none transition-all">
+                <input type="text" id="inp-country" placeholder="Country" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-opera-red/20 outline-none transition-all">
             </div>
 
-            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-xs font-bold text-[var(--opera-red)] uppercase">Location</h4>
-                    <button onclick="app.pickLocation('main')" class="text-xs bg-gray-800 text-white px-3 py-1 rounded-full">Pick on Map</button>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h4 class="text-[10px] font-black text-opera-red uppercase tracking-widest">Location</h4>
+                    <button onclick="app.pickLocation('main')" class="text-[10px] bg-opera-midnight text-white px-3 py-1.5 rounded-md font-bold hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-map-pin mr-1"></i> Pick on Map
+                    </button>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="inp-lat" placeholder="Lat" class="p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                    <input type="text" id="inp-lng" placeholder="Lng" class="p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" id="inp-lat" placeholder="Latitude" class="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs font-mono">
+                    <input type="text" id="inp-lng" placeholder="Longitude" class="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs font-mono">
                 </div>
                 <textarea id="inp-geometry" class="hidden"></textarea>
             </div>
 
-            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3">
-                <h4 class="text-xs font-bold text-orange-500 uppercase">Origins (Foodways)</h4>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
+                <h4 class="text-[10px] font-black text-opera-gold uppercase tracking-widest border-b pb-2">Origins (Heritage)</h4>
                 <div class="relative">
-                    <input type="text" id="inp-origin-name" placeholder="Origin Food Name (Search)" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm" oninput="app.handleOriginSearch(this.value)">
-                    <div id="origin-suggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-300 z-20 shadow-xl max-h-40 overflow-y-auto"></div>
+                    <input type="text" id="inp-origin-name" placeholder="Origin Food Name" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm font-bold" oninput="app.handleOriginSearch(this.value)">
+                    <div id="origin-suggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-300 z-20 shadow-xl max-h-40 overflow-y-auto rounded-b-xl"></div>
                 </div>
-                <input type="text" id="inp-origin-country" placeholder="Origin Country" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                <div class="flex gap-2">
-                    <button onclick="app.pickLocation('origin')" class="w-full py-2 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg border border-gray-200">Set Origin Coords</button>
-                </div>
+                <input type="text" id="inp-origin-country" placeholder="Origin Country" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
+                <button onclick="app.pickLocation('origin')" class="w-full py-3 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl border border-gray-200 hover:bg-gray-100 border-dashed">
+                    <i class="fas fa-crosshairs mr-1"></i> Set Origin Coordinates
+                </button>
                 <div class="hidden grid-cols-2 gap-2">
                     <input type="text" id="inp-origin-lat"><input type="text" id="inp-origin-lng">
                 </div>
-                <select id="inp-conn-type" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                    <option value="Trade">Trade</option>
-                    <option value="Migration">Migration</option>
-                    <option value="Colonialism">Colonialism</option>
-                </select>
+                <div class="relative">
+                    <select id="inp-conn-type" class="w-full p-3 bg-white rounded-xl border border-gray-200 text-sm appearance-none font-bold text-gray-600">
+                        <option value="Trade">Trade (Gold)</option>
+                        <option value="Migration">Migration (Red)</option>
+                        <option value="Colonialism">Colonialism (Navy)</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-4 top-4 text-gray-400 text-xs"></i>
+                </div>
             </div>
 
-            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-3">
-                <h4 class="text-xs font-bold text-gray-400 uppercase">Details</h4>
-                <textarea id="inp-desc" rows="4" placeholder="Historical description..." class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm"></textarea>
-                <input type="text" id="inp-image" placeholder="Image URL (Comma separated)" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                <input type="text" id="inp-youtube" placeholder="YouTube URL (Comma separated)" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                <input type="text" id="inp-unesco" placeholder="Heritage Status (e.g. UNESCO)" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                <input type="text" id="inp-research" placeholder="Source Links" class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
+                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b pb-2">Deep Dive</h4>
+                <textarea id="inp-desc" rows="4" placeholder="Historical context & narrative..." class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm leading-relaxed"></textarea>
+                <input type="text" id="inp-image" placeholder="Image URL (Comma separated)" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
+                <input type="text" id="inp-youtube" placeholder="YouTube URL" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
+                <input type="text" id="inp-unesco" placeholder="Heritage Status" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
+                <input type="text" id="inp-research" placeholder="Research Links" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm">
             </div>
 
-            <button id="btn-delete" onclick="app.deleteData()" class="w-full py-4 text-red-500 font-bold bg-red-50 rounded-xl hidden">Delete Entry</button>
+            <button id="btn-delete" onclick="app.deleteData()" class="w-full py-4 text-red-500 font-bold bg-red-50 rounded-xl border border-red-100 hover:bg-red-100 transition-colors hidden">
+                <i class="fas fa-trash-alt mr-2"></i> Delete Entry
+            </button>
             <div class="h-20"></div>
         </div>
     </div>
 
     <!-- LOGIN MODAL -->
-    <div id="login-modal" class="fixed inset-0 z-[3000] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl">
-            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Admin Access</h3>
-            <input type="text" id="login-user" placeholder="Username" class="w-full p-3 bg-gray-50 rounded-lg mb-3 border border-gray-200">
-            <input type="password" id="login-pass" placeholder="Password" class="w-full p-3 bg-gray-50 rounded-lg mb-6 border border-gray-200">
-            <button onclick="app.login()" id="btn-login" class="w-full bg-[var(--opera-red)] text-white font-bold py-3 rounded-xl mb-3">Login</button>
-            <button onclick="ui.closeModal('login-modal')" class="w-full text-gray-400 text-sm font-bold">Cancel</button>
+    <div id="login-modal" class="fixed inset-0 z-[3000] bg-opera-midnight/80 backdrop-blur-sm hidden flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-opera-red"></div>
+            <h3 class="text-2xl font-black text-opera-midnight mb-1 text-center">Admin Access</h3>
+            <p class="text-xs text-gray-400 text-center mb-6">Restricted Area</p>
+            
+            <div class="space-y-4">
+                <input type="text" id="login-user" placeholder="Username" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 text-center font-bold focus:ring-2 focus:ring-opera-red/20 outline-none">
+                <input type="password" id="login-pass" placeholder="••••••••" class="w-full p-4 bg-gray-50 rounded-xl border border-gray-200 text-center font-bold focus:ring-2 focus:ring-opera-red/20 outline-none">
+            </div>
+            
+            <button onclick="app.login()" id="btn-login" class="w-full bg-opera-midnight text-white font-bold py-4 rounded-xl mt-6 shadow-xl shadow-blue-900/20 active:scale-95 transition-transform">Verify Credentials</button>
+            <button onclick="ui.closeModal('login-modal')" class="w-full text-gray-400 text-xs font-bold mt-4 hover:text-gray-600">CANCEL</button>
         </div>
     </div>
 
     <!-- PICKER UI -->
     <div id="picker-ui" class="fixed top-0 left-0 w-full z-[2050] hidden">
-        <div class="bg-white/90 backdrop-blur p-4 border-b border-gray-200 flex justify-between items-center shadow-md">
-            <span class="font-bold text-sm text-[var(--opera-red)] animate-pulse">Tap Map Location</span>
-            <button onclick="app.cancelPicker()" class="bg-gray-100 px-4 py-1 rounded-full text-xs font-bold">Cancel</button>
+        <div class="bg-white/90 backdrop-blur-md p-4 border-b border-gray-200 flex justify-between items-center shadow-lg">
+            <span class="font-bold text-sm text-opera-red animate-pulse"><i class="fas fa-map-pin mr-1"></i> Tap Map Location</span>
+            <button onclick="app.cancelPicker()" class="bg-gray-100 px-4 py-1.5 rounded-full text-xs font-bold text-gray-600 hover:bg-gray-200">Cancel</button>
         </div>
     </div>
 
     <!-- LOADER -->
-    <div id="crud-loader" class="fixed inset-0 z-[5000] bg-black/30 backdrop-blur-sm hidden flex items-center justify-center">
-        <div class="bg-white p-4 rounded-full shadow-2xl">
-            <i class="fas fa-circle-notch fa-spin text-2xl text-[var(--opera-red)]"></i>
+    <div id="crud-loader" class="fixed inset-0 z-[5000] bg-opera-midnight/50 backdrop-blur-sm hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-3">
+            <i class="fas fa-circle-notch fa-spin text-3xl text-opera-red"></i>
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Processing...</span>
         </div>
     </div>
 
@@ -382,6 +431,11 @@
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbw5XZBvqGjPbjB_nE2ZeJ27Ppib9-9DjSKDeVzNF-HDQU0pes9rzVn6jI9uYYjfTac/exec';
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuPArVU91axob82CTzIgfmODCpa43OrFNIymoOVfV6UwtzUH7Yzb-yzorb3yBooJikXvsKSv10z3fV/pub?output=csv';
         
+        // Define handleImageError GLOBALLY first so it can be called by inline onclick
+        window.handleImageError = function(el) {
+            el.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>';
+        };
+
         const state = { 
             data: [], role: 'guest', editId: null, currentDetail: null,
             pagination: { page: 1, limit: 15 }, detailCache: {}, pickerTarget: null, filter: '',
@@ -435,7 +489,6 @@
             }
         };
 
-        // NEW: Video Carousel Logic with Direct Iframe
         function extractYoutubeCarousel(urlStr) {
             if (!urlStr) return '';
             const urls = urlStr.split(',').map(u => u.trim()).filter(u => u);
@@ -443,7 +496,7 @@
             
             return `
                 <div class="mb-6">
-                    <h4 class="font-bold text-gray-900 mb-3 px-4">Related Videos</h4>
+                    <h4 class="font-bold text-gray-900 mb-3 px-4 text-xs uppercase tracking-wider">Visual Archive</h4>
                     <div class="flex overflow-x-auto gap-4 px-4 snap-x no-scrollbar pb-2">
                         ${urls.map((url, index) => {
                             let id = null;
@@ -451,9 +504,8 @@
                             else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1];
                             else if(url.includes('embed/')) id = url.split('embed/')[1];
                             
-                            // Direct Iframe with lazy loading
                             return id ? `
-                                <div class="snap-center shrink-0 relative w-72 h-40 rounded-xl overflow-hidden shadow-md border border-gray-200 bg-black group">
+                                <div class="snap-center shrink-0 relative w-72 h-40 rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-black group">
                                     <iframe 
                                         class="w-full h-full" 
                                         src="https://www.youtube.com/embed/${id}?rel=0" 
@@ -471,11 +523,9 @@
             `;
         }
 
-        // NEW: Detail Maps Logic
         const detailMaps = {
             geo: null, conn: null,
             init: (d) => {
-                // Destroy previous maps if exist
                 if(detailMaps.geo) { detailMaps.geo.remove(); detailMaps.geo = null; }
                 if(detailMaps.conn) { detailMaps.conn.remove(); detailMaps.conn = null; }
 
@@ -502,8 +552,7 @@
                         const bounds = L.latLngBounds();
                         let hasConnections = false;
 
-                        // --- ALGORITMA PELACAKAN NODE (SERIAL & PARALEL) ---
-                        // A. Buat Peta Anak (Siapa tua dari siapa)
+                        // Connection Logic (Same as before)
                         const childrenMap = {};
                         state.data.forEach(item => {
                             if(item.origin_food_name) {
@@ -513,7 +562,6 @@
                             }
                         });
 
-                        // B. Cari "Ultimate Root"
                         let rootName = d.food_name;
                         let curr = d;
                         const pathUp = new Set([d.id]);
@@ -521,18 +569,14 @@
                         while(curr && curr.origin_food_name) {
                             const parentName = curr.origin_food_name;
                             const parentNode = state.data.find(n => n.food_name.toLowerCase().trim() === parentName.toLowerCase().trim());
-                            
                             rootName = parentName; 
                             if(parentNode) {
                                 if(pathUp.has(parentNode.id)) break; 
                                 pathUp.add(parentNode.id);
                                 curr = parentNode;
-                            } else {
-                                break; 
-                            }
+                            } else { break; }
                         }
 
-                        // C. Kumpulkan SEMUA turunan dari Root (BFS)
                         const familyNodes = [];
                         const queue = [rootName];
                         const visitedNames = new Set();
@@ -542,12 +586,8 @@
                             const lowerP = pName.toLowerCase().trim();
                             if(visitedNames.has(lowerP)) continue;
                             visitedNames.add(lowerP);
-
-                            // Jika nama ini ada datanya di DB, masukkan ke list
                             const realNode = state.data.find(n => n.food_name.toLowerCase().trim() === lowerP);
                             if(realNode) familyNodes.push(realNode);
-
-                            // Cari anak-anaknya
                             if(childrenMap[lowerP]) {
                                 childrenMap[lowerP].forEach(child => {
                                     familyNodes.push(child); 
@@ -556,40 +596,34 @@
                             }
                         }
 
-                        // D. Render Node Unik
                         const uniqueNodes = Array.from(new Map(familyNodes.map(item => [item.id, item])).values());
                         if(!uniqueNodes.find(n => n.id === d.id)) uniqueNodes.push(d); 
-
-                        // Sort agar node aktif di-render terakhir (paling atas)
                         uniqueNodes.sort((a, b) => (a.id === d.id) ? 1 : (b.id === d.id) ? -1 : 0);
 
                         uniqueNodes.forEach(node => {
-                            // Gambar Garis
                             if(node.origin_lat && node.origin_lng && node.lat && node.lng) {
                                  L.polyline([[node.origin_lat, node.origin_lng], [node.lat, node.lng]], {
-                                    color: '#fca5a5', 
-                                    weight: 1.5,
-                                    opacity: 0.8,
-                                    dashArray: '4, 4'
+                                    color: '#d4af37', /* GOLD LINES */
+                                    weight: 2,
+                                    opacity: 0.6,
+                                    dashArray: '6, 6'
                                 }).addTo(map2);
                                 
-                                // Titik Asal
                                 L.circleMarker([node.origin_lat, node.origin_lng], { 
-                                    color: '#fb923c', fillColor: '#fff', fillOpacity: 1, radius: 3, weight: 1
+                                    color: '#d4af37', fillColor: '#fff', fillOpacity: 1, radius: 4, weight: 2
                                 }).addTo(map2);
                                 
                                 bounds.extend([node.origin_lat, node.origin_lng]);
                                 hasConnections = true;
                             }
 
-                            // Gambar Marker Node
                             const isCurrent = node.id === d.id;
                             const m = L.circleMarker([node.lat, node.lng], { 
-                                color: isCurrent ? '#ff1b2d' : '#ef4444', 
-                                fillColor: isCurrent ? '#ff1b2d' : '#fee2e2', 
+                                color: isCurrent ? '#ff1b2d' : '#1a1a2e', /* Red or Navy */
+                                fillColor: isCurrent ? '#ff1b2d' : '#f3f4f6', 
                                 fillOpacity: 1, 
                                 radius: isCurrent ? 6 : 4,
-                                weight: isCurrent ? 0 : 1
+                                weight: isCurrent ? 0 : 2
                             }).addTo(map2);
 
                             if(isCurrent) {
@@ -600,7 +634,6 @@
                                     setTimeout(() => dashboard.showDetail(node), 300);
                                 });
                             }
-                            
                             bounds.extend([node.lat, node.lng]);
                         });
 
@@ -611,10 +644,9 @@
                             map2.setView([d.lat, d.lng], 4);
                             L.circleMarker([d.lat, d.lng], { color: '#ff1b2d', radius: 5 }).addTo(map2);
                         }
-
                         detailMaps.conn = map2;
                     }
-                }, 500); // Wait for modal slide animation
+                }, 500); 
             }
         };
 
@@ -633,28 +665,45 @@
 
                 const dataToRender = state.data.filter(d => visibleIds.has(d.id));
 
-                // PASS 1: DRAW LINES (Layer Terbawah)
+                // PASS 1: DRAW LINES (Layer Terbawah - Digambar Duluan)
                 dataToRender.forEach(d => {
                     if(!d.lat || !d.lng) return;
                     if(d.origin_lat && d.origin_lng) {
-                        const line = L.polyline([[d.origin_lat, d.origin_lng], [d.lat, d.lng]], { color: '#ff1b2d', weight: 1, opacity: 0.5, dashArray: '4, 4' }).addTo(mapLogic.map);
+                        const line = L.polyline([[d.origin_lat, d.origin_lng], [d.lat, d.lng]], { 
+                            color: '#d4af37', 
+                            weight: 1.5, 
+                            opacity: 0.3, // Lebih transparan biar tidak semrawut
+                            dashArray: '4, 6' 
+                        }).addTo(mapLogic.map);
                         mapLogic.layers.push(line);
                     }
                 });
 
-                // PASS 2: DRAW ORIGIN DOTS (Layer Tengah)
+                // PASS 2: DRAW ORIGIN DOTS (Layer Tengah - Titik Emas)
                 dataToRender.forEach(d => {
                     if(!d.lat || !d.lng) return;
                     if(d.origin_lat && d.origin_lng) {
-                        const oDot = L.circleMarker([d.origin_lat, d.origin_lng], { color: '#fb923c', radius: 3, fillOpacity: 1 }).addTo(mapLogic.map);
+                        const oDot = L.circleMarker([d.origin_lat, d.origin_lng], { 
+                            color: '#d4af37', 
+                            radius: 3, 
+                            fillOpacity: 1, 
+                            stroke: false // Tanpa border biar rapi
+                        }).addTo(mapLogic.map);
                         mapLogic.layers.push(oDot);
                     }
                 });
 
-                // PASS 3: DRAW LOCAL DOTS (Layer Paling Atas - Pasti Klikable)
+                // PASS 3: DRAW LOCAL DOTS (Layer Paling Atas - Titik Merah)
                 dataToRender.forEach(d => {
                     if(!d.lat || !d.lng) return;
-                    const m = L.circleMarker([d.lat, d.lng], { color: '#ff1b2d', fillColor: '#ff1b2d', fillOpacity: 0.8, radius: 5 }).addTo(mapLogic.map);
+                    // Titik Merah dengan border putih agar kontras jika menumpuk
+                    const m = L.circleMarker([d.lat, d.lng], { 
+                        color: '#fff', // Border putih
+                        fillColor: '#ff1b2d', 
+                        fillOpacity: 1, 
+                        radius: 6, 
+                        weight: 2 // Tebal border putih
+                    }).addTo(mapLogic.map);
                     m.on('click', () => { dashboard.showDetail(d); });
                     mapLogic.layers.push(m);
                 });
@@ -664,7 +713,8 @@
                 document.getElementById('picker-ui').classList.remove('hidden');
                 const handler = (e) => { cb(e.latlng.lat, e.latlng.lng); mapLogic.map.off('click', handler); document.getElementById('picker-ui').classList.add('hidden'); ui.openModal('input-modal'); };
                 mapLogic.map.on('click', handler); mapLogic.pickerCancel = handler;
-            }
+            },
+            cancelPicker: () => { if(mapLogic.map && mapLogic.pickerCancel) { mapLogic.map.off('click', mapLogic.pickerCancel); document.getElementById('picker-ui').classList.add('hidden'); ui.openModal('input-modal'); } }
         };
 
         const dashboard = {
@@ -680,7 +730,7 @@
                 state.data.forEach(d => {
                     const type = d.connection_type ? d.connection_type.trim() : 'Trade';
                     if (counts[type] !== undefined) counts[type]++;
-                    else counts['Trade']++; // Fallback
+                    else counts['Trade']++; 
                 });
 
                 state.charts.types = new Chart(ctx, {
@@ -689,18 +739,19 @@
                         labels: ['Trade', 'Migration', 'Colonialism'],
                         datasets: [{
                             data: [counts.Trade, counts.Migration, counts.Colonialism],
-                            backgroundColor: ['#fbbf24', '#f87171', '#34d399'], // Yellow, Red, Green
+                            backgroundColor: ['#d4af37', '#ff1b2d', '#1a1a2e'], /* Gold, Red, Navy */
                             borderWidth: 0,
-                            hoverOffset: 4
+                            hoverOffset: 10
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'right', labels: { boxWidth: 12, usePointStyle: true, font: { size: 10 } } }
+                            legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, font: { family: "'Helvetica', sans-serif", size: 11, weight: 'bold' }, padding: 15 } }
                         },
-                        cutout: '60%'
+                        cutout: '70%',
+                        layout: { padding: 10 }
                     }
                 });
             },
@@ -717,7 +768,23 @@
                     const card = document.createElement('div');
                     card.className = 'mobile-card p-4 flex items-center gap-4 active:bg-gray-50';
                     card.onclick = () => dashboard.showDetail(d);
-                    card.innerHTML = `<div class="w-12 h-12 rounded-full bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">${img ? `<img src="${img}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-xl">🍲</div>`}</div><div class="flex-1 min-w-0"><h4 class="font-bold text-gray-800 text-sm truncate">${d.food_name}</h4><p class="text-xs text-gray-500 truncate"><i class="fas fa-map-marker-alt text-red-400 mr-1"></i> ${d.country}</p>${d.connection_type ? `<span class="inline-block mt-1 px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-bold rounded-md uppercase tracking-wide border border-orange-100">${d.connection_type}</span>` : ''}</div><i class="fas fa-chevron-right text-gray-300 text-sm"></i>`;
+                    
+                    // REVISED CARD UI
+                    card.innerHTML = `
+                        <div class="w-14 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-sm relative group-hover:shadow-md transition-all">
+                            ${img ? `<img src="${img}" class="w-full h-full object-cover" onerror="handleImageError(this)">` : `<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>`}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-gray-800 text-sm truncate mb-1">${d.food_name}</h4>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-gray-500 font-medium flex items-center bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
+                                    <i class="fas fa-map-marker-alt text-opera-red mr-1.5"></i> ${d.country}
+                                </span>
+                                ${d.connection_type ? `<span class="text-[9px] font-bold px-2 py-0.5 rounded border ${d.connection_type === 'Trade' ? 'bg-yellow-50 text-yellow-700 border-yellow-100' : d.connection_type === 'Migration' ? 'bg-red-50 text-red-700 border-red-100' : 'bg-blue-50 text-blue-800 border-blue-100'} uppercase">${d.connection_type}</span>` : ''}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                    `;
                     container.appendChild(card);
                 });
                 document.getElementById('btn-load-more').style.display = end >= filtered.length ? 'none' : 'inline-block';
@@ -734,63 +801,71 @@
                 let imagesHtml = '';
                 if(d.image_url) {
                     const urls = d.image_url.split(',');
-                    imagesHtml = `<div class="flex overflow-x-auto gap-2 p-4 snap-x no-scrollbar">${urls.map(u => `<img src="${u.trim()}" class="snap-center w-64 h-48 object-cover rounded-xl border border-gray-200 bg-gray-100">`).join('')}</div>`;
+                    imagesHtml = `<div class="flex overflow-x-auto gap-3 p-4 snap-x no-scrollbar">${urls.map(u => `<img src="${u.trim()}" class="snap-center w-72 h-56 object-cover rounded-2xl border border-gray-100 shadow-md" onerror="this.style.display='none'">`).join('')}</div>`;
                 }
 
-                // Generate Video Carousel
                 const videoHtml = extractYoutubeCarousel(d.youtube_url);
 
                 container.innerHTML = `
                     ${imagesHtml}
-                    <div class="px-4 pb-4">
-                        <h1 class="text-3xl font-black text-gray-900 mb-1 leading-tight">${d.food_name}</h1>
-                        <div class="flex items-center gap-2 mb-6">
-                            <span class="px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-bold border border-red-100">${d.country}</span>
-                            ${d.unesco_status ? `<span class="px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-bold border border-green-100">UNESCO</span>` : ''}
+                    <div class="px-5 pb-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <h1 class="text-3xl font-black text-opera-midnight leading-tight tracking-tight flex-1">${d.food_name}</h1>
+                            ${d.unesco_status ? `<div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center border border-green-200" title="UNESCO"><i class="fas fa-landmark text-green-600 text-xs"></i></div>` : ''}
+                        </div>
+                        
+                        <div class="flex items-center gap-2 mb-8">
+                            <span class="px-3 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider">${d.country}</span>
+                            ${d.connection_type ? `<span class="px-3 py-1 rounded-md ${d.connection_type==='Trade'?'bg-yellow-50 text-yellow-700':d.connection_type==='Migration'?'bg-red-50 text-red-700':'bg-blue-50 text-blue-800'} text-[10px] font-bold uppercase tracking-wider">${d.connection_type}</span>` : ''}
                         </div>
 
                         ${d.origin_food_name ? `
-                        <div class="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
-                            <div class="text-xs text-gray-400 uppercase font-bold mb-2 text-center">Evolution Path</div>
-                            <div class="flex flex-col items-center gap-2">
-                                <div class="text-center"><div class="font-bold text-gray-700">${d.origin_food_name}</div><div class="text-xs text-gray-500">${d.origin_country}</div></div>
-                                <i class="fas fa-arrow-down text-orange-400"></i>
-                                <div class="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded uppercase">${d.connection_type}</div>
-                                <i class="fas fa-arrow-down text-orange-400"></i>
-                                <div class="text-center"><div class="font-bold text-[var(--opera-red)] text-lg">${d.food_name}</div><div class="text-xs text-gray-500">${d.country}</div></div>
+                        <div class="bg-gray-50 rounded-2xl p-5 mb-8 border border-gray-100 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-opera-gold/5 rounded-bl-full"></div>
+                            <div class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-4 text-center">Evolutionary Path</div>
+                            <div class="flex flex-col items-center gap-1 relative z-10">
+                                <div class="text-center">
+                                    <div class="font-bold text-gray-600 text-sm">${d.origin_food_name}</div>
+                                    <div class="text-[10px] text-gray-400 font-medium tracking-wide">${d.origin_country}</div>
+                                </div>
+                                <div class="h-6 w-0.5 bg-gray-300 my-1"></div>
+                                <div class="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center z-10 shadow-sm">
+                                    <i class="fas fa-arrow-down text-[10px] text-gray-400"></i>
+                                </div>
+                                <div class="h-6 w-0.5 bg-gray-300 my-1"></div>
+                                <div class="text-center">
+                                    <div class="font-black text-opera-red text-xl">${d.food_name}</div>
+                                    <div class="text-[10px] text-gray-500 font-medium tracking-wide">${d.country}</div>
+                                </div>
                             </div>
                         </div>` : ''}
 
-                        <div class="prose prose-sm text-gray-600 mb-6">
-                            <h4 class="font-bold text-gray-900 mb-2">History</h4>
-                            <p class="whitespace-pre-line">${d.description || 'No description provided.'}</p>
+                        <div class="prose prose-sm text-gray-600 mb-8 leading-relaxed">
+                            <h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3 border-b border-gray-100 pb-2">Historical Narrative</h4>
+                            <p class="whitespace-pre-line text-sm">${d.description || 'No description provided.'}</p>
                         </div>
 
-                        <!-- VIDEO CAROUSEL -->
                         ${videoHtml}
                         
-                        <!-- MAPS SECTION -->
                         <div class="mb-6">
-                            <h4 class="font-bold text-gray-900 mb-3">Geographic Distribution</h4>
-                            ${d.geometry_json ? `<div id="detail-geo-map" class="h-48 w-full bg-gray-200 rounded-xl border border-gray-200"></div>` : '<div class="text-xs text-gray-400 italic">No distribution data.</div>'}
+                            <h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3">Distribution</h4>
+                            ${d.geometry_json ? `<div id="detail-geo-map" class="h-48 w-full bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden shadow-inner"></div>` : '<div class="text-xs text-gray-400 italic bg-gray-50 p-4 rounded-xl text-center">No distribution data available.</div>'}
                         </div>
 
-                        <div class="mb-6">
-                            <h4 class="font-bold text-gray-900 mb-3">Influence Map</h4>
-                            ${d.origin_lat ? `<div id="detail-conn-map" class="h-48 w-full bg-gray-200 rounded-xl border border-gray-200"></div>` : '<div class="text-xs text-gray-400 italic">No origin coordinates.</div>'}
+                        <div class="mb-8">
+                            <h4 class="font-bold text-opera-midnight text-xs uppercase tracking-wider mb-3">Foodways Connection</h4>
+                            ${d.origin_lat ? `<div id="detail-conn-map" class="h-48 w-full bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden shadow-inner"></div>` : '<div class="text-xs text-gray-400 italic bg-gray-50 p-4 rounded-xl text-center">No origin data available.</div>'}
                         </div>
 
                         ${d.research_links ? `
-                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-8">
-                            <h4 class="font-bold text-blue-800 text-xs uppercase mb-2">Sources</h4>
-                            <div class="flex flex-col gap-2 text-xs text-blue-600 truncate">
-                                ${d.research_links.split(',').map(l => `<a href="${l}" target="_blank" class="underline block truncate">${l}</a>`).join('')}
+                        <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-50 mb-8">
+                            <h4 class="font-bold text-blue-900 text-[10px] uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-book"></i> Sources</h4>
+                            <div class="flex flex-col gap-3 text-xs text-blue-700">
+                                ${d.research_links.split(',').map(l => `<a href="${l}" target="_blank" class="flex items-center gap-2 truncate hover:underline"><i class="fas fa-external-link-alt text-[10px] opacity-50"></i> <span class="truncate">${l}</span></a>`).join('')}
                             </div>
                         </div>` : ''}
                     </div>
                 `;
-
-                // Initialize Maps after content render
                 detailMaps.init(d);
             }
         };
@@ -799,7 +874,7 @@
             init: () => {
                 Papa.parse(CSV_URL, {
                     download: true, header: true, skipEmptyLines: true,
-                    complete: (res) => { if(res.data.length) { state.data = res.data.map(transformData).filter(x => x.lat && x.lng); document.getElementById('loading-indicator').innerHTML = '<i class="fas fa-check text-green-500"></i> Ready'; document.getElementById('btn-enter').classList.remove('hidden'); } }
+                    complete: (res) => { if(res.data.length) { state.data = res.data.map(transformData).filter(x => x.lat && x.lng); document.getElementById('loading-indicator').innerHTML = '<i class="fas fa-check text-green-400"></i> <span class="text-xs text-gray-300 ml-1">Synced</span>'; document.getElementById('btn-enter').classList.remove('hidden'); } }
                 });
             },
             enterApp: () => { document.getElementById('landing-page').classList.add('opacity-0'); setTimeout(() => { document.getElementById('landing-page').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); dashboard.renderKPI(); dashboard.renderFeed(); mapLogic.init(); mapLogic.render(); }, 500); },
@@ -815,11 +890,11 @@
                 if(tab === 'profile') { setTimeout(() => dashboard.renderAnalytics(), 100); }
             },
             handleGlobalSearch: (val) => { state.filter = val; state.pagination.page = 1; dashboard.renderFeed(); mapLogic.render(); },
-            initiateAddEntry: () => { state.editId = null; document.querySelectorAll('#input-modal input, #input-modal textarea').forEach(e => e.value = ''); document.getElementById('input-title').innerText = 'New Food Entry'; document.getElementById('btn-delete').classList.add('hidden'); ui.openModal('input-modal'); },
+            initiateAddEntry: () => { state.editId = null; document.querySelectorAll('#input-modal input, #input-modal textarea').forEach(e => e.value = ''); document.getElementById('input-title').innerText = 'New Entry'; document.getElementById('btn-delete').classList.add('hidden'); ui.openModal('input-modal'); },
             openInputModal: (mode) => { if(mode === 'edit' && state.currentDetail) { const d = state.currentDetail; state.editId = d.id; document.getElementById('inp-id').value = d.id; document.getElementById('inp-name').value = d.food_name; document.getElementById('inp-country').value = d.country; document.getElementById('inp-lat').value = d.lat; document.getElementById('inp-lng').value = d.lng; document.getElementById('inp-desc').value = d.description; document.getElementById('inp-origin-name').value = d.origin_food_name || ''; document.getElementById('inp-origin-country').value = d.origin_country || ''; document.getElementById('inp-origin-lat').value = d.origin_lat || ''; document.getElementById('inp-origin-lng').value = d.origin_lng || ''; document.getElementById('inp-conn-type').value = d.connection_type || 'Trade'; document.getElementById('inp-image').value = d.image_url || ''; document.getElementById('inp-youtube').value = d.youtube_url || ''; document.getElementById('inp-unesco').value = d.unesco_status || ''; document.getElementById('inp-research').value = d.research_links || ''; document.getElementById('input-title').innerText = 'Edit Entry'; document.getElementById('btn-delete').classList.remove('hidden'); ui.closeModal('detail-modal'); ui.openModal('input-modal'); } },
             pickLocation: (target) => { state.pickerTarget = target; ui.closeModal('input-modal'); document.getElementById('view-dashboard').classList.add('hidden'); document.getElementById('view-profile').classList.add('hidden'); document.getElementById('view-map').classList.remove('hidden'); mapLogic.enablePicker((lat, lng) => { if(state.pickerTarget === 'main') { document.getElementById('inp-lat').value = lat.toFixed(5); document.getElementById('inp-lng').value = lng.toFixed(5); } else { document.getElementById('inp-origin-lat').value = lat.toFixed(5); document.getElementById('inp-origin-lng').value = lng.toFixed(5); } }); },
             cancelPicker: () => { if(mapLogic.map && mapLogic.pickerCancel) { mapLogic.map.off('click', mapLogic.pickerCancel); document.getElementById('picker-ui').classList.add('hidden'); ui.openModal('input-modal'); } },
-            login: () => { const u = document.getElementById('login-user').value; const p = document.getElementById('login-pass').value; const btn = document.getElementById('btn-login'); btn.innerText = 'Verifying...'; const form = new URLSearchParams(); form.append('action', 'login'); form.append('username', u); form.append('password', p); fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(d => { if(d.status === 'success') { state.role = 'admin'; document.getElementById('profile-role').innerText = 'Admin Contributor'; document.getElementById('btn-login-profile').classList.add('hidden'); document.getElementById('btn-logout-profile').classList.remove('hidden'); document.getElementById('header-add-btn').classList.remove('hidden'); ui.closeModal('login-modal'); } else { alert('Invalid Credentials'); } btn.innerText = 'Login'; }).catch(e => { alert('Network Error'); btn.innerText = 'Login'; }); },
+            login: () => { const u = document.getElementById('login-user').value; const p = document.getElementById('login-pass').value; const btn = document.getElementById('btn-login'); btn.innerText = 'Verifying...'; const form = new URLSearchParams(); form.append('action', 'login'); form.append('username', u); form.append('password', p); fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(d => { if(d.status === 'success') { state.role = 'admin'; document.getElementById('profile-role').innerText = 'Admin Access'; document.getElementById('btn-login-profile').classList.add('hidden'); document.getElementById('btn-logout-profile').classList.remove('hidden'); document.getElementById('header-add-btn').classList.remove('hidden'); ui.closeModal('login-modal'); } else { alert('Invalid Credentials'); } btn.innerText = 'Login'; }).catch(e => { alert('Network Error'); btn.innerText = 'Login'; }); },
             logout: () => { state.role = 'guest'; document.getElementById('profile-role').innerText = 'Guest User'; document.getElementById('btn-login-profile').classList.remove('hidden'); document.getElementById('btn-logout-profile').classList.add('hidden'); document.getElementById('header-add-btn').classList.add('hidden'); },
             
             saveData: () => { 
@@ -834,221 +909,61 @@
                 fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { 
                     ui.showLoader(false); 
                     if(res.status === 'success') { 
-                        alert('Saved!'); 
-                        // Update Local State directly (No Reload)
-                        if (action === 'insert') {
-                            state.data.push({ ...d, id: 'temp-' + Date.now() }); // Temporary ID for immediate display
-                        } else {
-                            const idx = state.data.findIndex(x => x.id === state.editId);
-                            if (idx > -1) state.data[idx] = { ...state.data[idx], ...d };
-                        }
-                        
-                        // Re-render UI
-                        dashboard.renderFeed();
-                        mapLogic.render();
-                        dashboard.renderKPI();
-                        
-                        // Close Input Modal
-                        ui.closeModal('input-modal');
-                        
-                        // If we were editing a detail view, refresh it
-                        if (action === 'update' && state.currentDetail && state.currentDetail.id === state.editId) {
-                            const updated = state.data.find(x => x.id === state.editId);
-                            if(updated) dashboard.showDetail(updated);
-                        }
+                        if (action === 'insert') { state.data.push({ ...d, id: 'temp-' + Date.now() }); } 
+                        else { const idx = state.data.findIndex(x => x.id === state.editId); if (idx > -1) state.data[idx] = { ...state.data[idx], ...d }; }
+                        dashboard.renderFeed(); mapLogic.render(); dashboard.renderKPI(); ui.closeModal('input-modal'); 
+                        if (action === 'update' && state.currentDetail && state.currentDetail.id === state.editId) { const updated = state.data.find(x => x.id === state.editId); if(updated) dashboard.showDetail(updated); }
                     } else alert(res.message); 
                 }); 
             },
-
             deleteData: () => { 
-                if(!confirm('Delete this entry?')) return; 
-                ui.showLoader(true); 
-                const form = new URLSearchParams(); 
-                form.append('action', 'delete'); 
-                form.append('id', state.editId); 
-                form.append('data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); 
-                
-                fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { 
-                    ui.showLoader(false); 
-                    if(res.status === 'success') {
-                        // Remove from local state
-                        state.data = state.data.filter(x => x.id !== state.editId);
-                        
-                        // Re-render
-                        dashboard.renderFeed();
-                        mapLogic.render();
-                        dashboard.renderKPI();
-                        
-                        // Close Modals (Back to Map/Feed)
-                        ui.closeModal('input-modal');
-                        ui.closeModal('detail-modal');
-                    } else alert(res.message); 
-                }); 
+                if(!confirm('Delete this entry?')) return; ui.showLoader(true); 
+                const form = new URLSearchParams(); form.append('action', 'delete'); form.append('id', state.editId); form.append('data', JSON.stringify({ food_name: state.currentDetail.food_name, lat: state.currentDetail.lat, lng: state.currentDetail.lng })); 
+                fetch(GAS_URL, { method: 'POST', body: form }).then(r=>r.json()).then(res => { ui.showLoader(false); if(res.status === 'success') { state.data = state.data.filter(x => x.id !== state.editId); dashboard.renderFeed(); mapLogic.render(); dashboard.renderKPI(); ui.closeModal('input-modal'); ui.closeModal('detail-modal'); } else alert(res.message); }); 
             },
-            
-            // PDF Export Logic
             exportToPDF: async () => { 
-                const d = state.currentDetail;
-                if(!d) return;
-
+                const d = state.currentDetail; if(!d) return;
                 const btn = document.querySelector('button[onclick="app.exportToPDF()"]');
                 const oldContent = btn ? btn.innerHTML : '';
-                if(btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-                }
-
+                if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; }
                 try {
-                    // 1. CAPTURE MAPS
-                    let geoMapImg = null;
-                    let connMapImg = null;
-                    
+                    let geoMapImg = null, connMapImg = null;
                     await new Promise(r => setTimeout(r, 500));
+                    if (document.getElementById('detail-geo-map')) { try { geoMapImg = (await html2canvas(document.getElementById('detail-geo-map'), { useCORS: true, scale: 2 })).toDataURL('image/jpeg', 0.9); } catch(e){} }
+                    if (document.getElementById('detail-conn-map')) { try { connMapImg = (await html2canvas(document.getElementById('detail-conn-map'), { useCORS: true, scale: 2 })).toDataURL('image/jpeg', 0.9); } catch(e){} }
 
-                    const geoMapEl = document.getElementById('detail-geo-map');
-                    if (geoMapEl) {
-                        try {
-                            const canvas = await html2canvas(geoMapEl, { useCORS: true, scale: 2 });
-                            geoMapImg = canvas.toDataURL('image/jpeg', 0.9);
-                        } catch(e) { console.warn('Gagal capture geo map', e); }
-                    }
-                    
-                    const connMapEl = document.getElementById('detail-conn-map');
-                    if (connMapEl) {
-                        try {
-                            const canvas = await html2canvas(connMapEl, { useCORS: true, scale: 2 });
-                            connMapImg = canvas.toDataURL('image/jpeg', 0.9);
-                        } catch(e) { console.warn('Gagal capture conn map', e); }
-                    }
-
-                    // 2. BUILD HTML STRUCTURE
                     const content = document.createElement('div');
-                    content.style.width = '100%';
-                    content.style.padding = '20px';
-                    content.style.fontFamily = "'Helvetica', 'Arial', sans-serif";
-                    content.style.color = '#333';
-                    content.style.background = '#fff';
+                    content.style.width = '100%'; content.style.padding = '30px'; content.style.fontFamily = "'Helvetica', 'Arial', sans-serif"; content.style.color = '#1a1a2e'; content.style.background = '#fff';
 
-                    // HEADER
-                    let headerHtml = `
-                        <div style="border-bottom: 2px solid #ff1b2d; padding-bottom: 15px; margin-bottom: 20px;">
-                            <h1 style="font-size: 28px; font-weight: 900; margin: 0; line-height: 1.2; color: #000;">${d.food_name}</h1>
-                            <div style="margin-top: 8px; font-size: 12px; display: flex; gap: 5px;">
-                                <span style="background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #fecaca;">${d.country.toUpperCase()}</span>
-                                ${d.unesco_status ? `<span style="background: #ecfdf5; color: #047857; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #a7f3d0;">${d.unesco_status.toUpperCase()}</span>` : ''}
+                    content.innerHTML = `
+                        <div style="border-bottom: 4px solid #ff1b2d; padding-bottom: 20px; margin-bottom: 30px;">
+                            <h1 style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1.2; color: #1a1a2e;">${d.food_name}</h1>
+                            <div style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #666;">
+                                <span style="color: #ff1b2d;">${d.country.toUpperCase()}</span>
+                                ${d.unesco_status ? ` • <span style="color: #047857;">UNESCO RECOGNIZED</span>` : ''}
                             </div>
                         </div>
-                    `;
-
-                    // IMAGES
-                    let imagesHtml = '';
-                    if (d.image_url) {
-                        const urls = d.image_url.split(',').filter(u => u.trim());
-                        imagesHtml = `
-                            <div style="margin-bottom: 25px;">
-                                <div style="display: flex; gap: 10px; overflow: hidden; flex-wrap: wrap;">
-                                    ${urls.map((u, i) => `<img src="${u.trim()}" style="height: ${i===0?'200px':'95px'}; flex: ${i===0?'100%':'1'}; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;" crossorigin="anonymous">`).join('')}
-                                </div>
-                            </div>`;
-                    }
-
-                    // EVOLUTION PATH
-                    let evolutionHtml = '';
-                    if (d.origin_food_name) {
-                        evolutionHtml = `
-                            <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px dashed #d1d5db; text-align: center;">
-                                <div style="font-size: 10px; font-weight: bold; color: #9ca3af; letter-spacing: 1px; margin-bottom: 15px;">EVOLUTION PATH</div>
-                                <div style="display: inline-block; text-align: center;">
-                                    <div style="font-weight: bold; font-size: 14px; color: #374151;">${d.origin_food_name}</div>
-                                    <div style="font-size: 10px; color: #6b7280;">(${d.origin_country})</div>
-                                </div>
-                                <div style="color: #f97316; font-size: 16px; margin: 5px 0;">↓</div>
-                                <div style="display: inline-block; background: #fff7ed; color: #c2410c; padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: bold; border: 1px solid #ffedd5;">${d.connection_type || 'MIGRATION'}</div>
-                                <div style="color: #f97316; font-size: 16px; margin: 5px 0;">↓</div>
-                                <div style="display: inline-block; text-align: center;">
-                                    <div style="font-weight: 900; font-size: 16px; color: #ff1b2d;">${d.food_name}</div>
-                                    <div style="font-size: 10px; color: #6b7280;">(${d.country})</div>
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    // HISTORY
-                    let historyHtml = `
-                        <div style="margin-bottom: 25px;">
-                            <h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #f3f4f6; padding-bottom: 8px; margin-bottom: 10px; color: #111;">History & Narrative</h3>
-                            <p style="font-size: 11px; line-height: 1.6; text-align: justify; color: #4b5563; white-space: pre-line;">${d.description || 'No historical description available.'}</p>
+                        ${d.image_url ? `<div style="margin-bottom: 30px; display: flex; gap: 10px; height: 200px; overflow: hidden;">${d.image_url.split(',').slice(0,3).map(u => `<img src="${u.trim()}" style="flex: 1; height: 100%; object-fit: cover; border-radius: 8px;" crossorigin="anonymous" onerror="this.style.display='none'">`).join('')}</div>` : ''}
+                        ${d.origin_food_name ? `
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #d4af37;">
+                            <h3 style="font-size: 12px; font-weight: bold; color: #999; text-transform: uppercase; margin: 0 0 10px 0;">Heritage Lineage</h3>
+                            <div style="font-size: 16px; font-weight: bold;">${d.origin_food_name} <span style="font-weight: normal; font-size: 14px; color: #666;">(${d.origin_country})</span></div>
+                            <div style="color: #d4af37; font-size: 20px; margin: 5px 0;">↓ <span style="font-size: 12px; font-weight: bold; color: #d4af37; vertical-align: middle; text-transform: uppercase;">${d.connection_type}</span></div>
+                            <div style="font-size: 16px; font-weight: bold; color: #ff1b2d;">${d.food_name}</div>
+                        </div>` : ''}
+                        <div style="margin-bottom: 30px;">
+                            <h3 style="font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Historical Narrative</h3>
+                            <p style="font-size: 12px; line-height: 1.8; text-align: justify;">${d.description || 'No description available.'}</p>
                         </div>
+                        ${geoMapImg || connMapImg ? `<div style="page-break-inside: avoid;">
+                            ${geoMapImg ? `<div style="margin-bottom: 20px;"><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Geographic Distribution</h4><img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}
+                            ${connMapImg ? `<div><h4 style="font-size: 12px; font-weight: bold; margin-bottom: 10px;">Cultural Connections</h4><img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;"></div>` : ''}
+                        </div>` : ''}
+                        <div style="margin-top: 40px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">Generated by Foodways Mobile • Shared Heritage Project</div>
                     `;
 
-                    // MAPS
-                    let mapsHtml = '';
-                    if (geoMapImg || connMapImg) {
-                        mapsHtml = `<div style="page-break-inside: avoid;">`;
-                        if (geoMapImg) {
-                            mapsHtml += `
-                                <div style="margin-bottom: 15px;">
-                                    <h4 style="font-size: 11px; font-weight: bold; margin-bottom: 8px; color: #2563eb; display: flex; align-items: center;">
-                                        <span style="display:inline-block; width:8px; height:8px; background:#2563eb; margin-right:5px; border-radius:50%;"></span> Geographic Distribution
-                                    </h4>
-                                    <img src="${geoMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                </div>
-                            `;
-                        }
-                        if (connMapImg) {
-                            mapsHtml += `
-                                <div>
-                                    <h4 style="font-size: 11px; font-weight: bold; margin-bottom: 8px; color: #ea580c; display: flex; align-items: center;">
-                                        <span style="display:inline-block; width:8px; height:8px; background:#ea580c; margin-right:5px; border-radius:50%;"></span> Influence Map (Foodways)
-                                    </h4>
-                                    <img src="${connMapImg}" style="width: 100%; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                </div>
-                            `;
-                        }
-                        mapsHtml += `</div>`;
-                    }
-
-                    // FOOTER
-                    let footerHtml = '';
-                    if (d.research_links) {
-                        footerHtml = `
-                            <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; padding: 15px; border-radius: 8px;">
-                                <h4 style="font-size: 10px; font-weight: bold; color: #374151; margin-bottom: 8px; text-transform: uppercase;">Research Sources</h4>
-                                <ul style="margin: 0; padding-left: 15px; font-size: 9px; color: #2563eb; list-style-type: square;">
-                                    ${d.research_links.split(',').map(l => `<li style="margin-bottom: 4px; overflow-wrap: break-word;">${l.trim()}</li>`).join('')}
-                                </ul>
-                            </div>
-                        `;
-                    }
-                    
-                    const metaFooter = `
-                        <div style="text-align: center; margin-top: 20px; font-size: 8px; color: #9ca3af;">
-                            Generated by Foodways Shared Heritage Project • ${new Date().toLocaleDateString()}
-                        </div>
-                    `;
-
-                    content.innerHTML = headerHtml + imagesHtml + evolutionHtml + historyHtml + mapsHtml + footerHtml + metaFooter;
-
-                    // 3. GENERATE PDF
-                    const opt = {
-                        margin:       10,
-                        filename:     `${d.food_name.replace(/\s+/g, '_')}_FullProfile.pdf`,
-                        image:        { type: 'jpeg', quality: 0.98 },
-                        html2canvas:  { scale: 2, useCORS: true, letterRendering: true }, 
-                        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                    };
-
-                    await html2pdf().set(opt).from(content).save();
-
-                } catch(e) {
-                    console.error(e);
-                    alert("Gagal membuat PDF. Coba lagi.");
-                } finally {
-                    if(btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = oldContent;
-                    }
-                }
+                    await html2pdf().set({ margin: 15, filename: `${d.food_name}_Profile.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(content).save();
+                } catch(e) { console.error(e); alert("PDF Generation Failed"); } finally { if(btn) { btn.disabled = false; btn.innerHTML = oldContent; } }
             }
         };
 
