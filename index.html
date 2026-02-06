@@ -169,7 +169,8 @@
             Start Exploring <i class="fas fa-arrow-right ml-1"></i>
         </button>
         
-        <div onclick="window.ui.openModal('login-modal')" class="absolute bottom-8 text-[10px] text-white/30 font-bold uppercase tracking-widest p-4 cursor-pointer z-10 hover:text-white transition-colors">Admin Access</div>
+        <!-- MODIFIED: onclick changed to call window.app.enterAdmin() -->
+        <div onclick="window.app.enterAdmin()" class="absolute bottom-8 text-[10px] text-white/30 font-bold uppercase tracking-widest p-4 cursor-pointer z-10 hover:text-white transition-colors">Admin Access</div>
     </div>
 
     <!-- 2. MAIN APP LAYOUT -->
@@ -1105,6 +1106,17 @@
                 });
             },
             enterApp: () => { document.getElementById('landing-page').classList.add('opacity-0'); setTimeout(() => { document.getElementById('landing-page').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); window.dashboard.renderKPI(); window.dashboard.renderFeed(); window.mapLogic.init(); window.mapLogic.render(); }, 500); },
+            
+            // --- NEW FUNCTION: ENTER DIRECTLY WITH LOGIN ---
+            enterAdmin: () => {
+                // 1. Trigger the standard enter animation
+                window.app.enterApp();
+                // 2. Wait slightly longer than the fade out (500ms) to show the modal cleanly
+                setTimeout(() => {
+                    window.ui.openModal('login-modal');
+                }, 600);
+            },
+
             switchTab: (tab, el) => { 
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); 
                 document.getElementById('view-dashboard').classList.add('hidden'); document.getElementById('view-map').classList.add('hidden'); document.getElementById('view-profile').classList.add('hidden'); 
