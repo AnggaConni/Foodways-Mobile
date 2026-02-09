@@ -469,6 +469,17 @@
             el.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>';
         };
 
+        // --- GLOBAL SANITIZER (Prevents XSS in Titles, Countries, Tooltips) ---
+        window.escapeHtml = (text) => {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        };
+
         const state = { 
             data: [], role: 'guest', editId: null, currentDetail: null,
             pagination: { page: 1, limit: 15 }, detailCache: {}, pickerTarget: null, filter: '',
@@ -480,29 +491,22 @@
             if (!text) return '';
 
             // 1. Sanitize HTML (prevent XSS)
-            let safe = text.replace(/&/g, '&amp;')
-                           .replace(/</g, '&lt;')
-                           .replace(/>/g, '&gt;')
-                           .replace(/"/g, '&quot;')
-                           .replace(/'/g, '&#039;');
+            let safe = window.escapeHtml(text);
 
             // 2. Simple Formatting Rules
-            // Headers (e.g. # Title)
             safe = safe.replace(/^# (.*$)/gim, '<h3 class="font-black text-lg mt-4 mb-2 text-opera-midnight border-b border-gray-100 pb-1">$1</h3>');
-            
-            // Bold (**text**)
             safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // Italic (*text*)
             safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
             
-            // Links ([text](url))
-            safe = safe.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+            // 3. SECURE LINKS (Only http/https allowed)
+            safe = safe.replace(/\[(.*?)\]\((.*?)\)/g, (match, label, url) => {
+                if (url.match(/^https?:\/\//i)) {
+                    return `<a href="${url}" target="_blank">$1</a>`;
+                }
+                return `${label} (${url})`; // Fallback for unsafe links (javascript:)
+            });
             
-            // Lists (- item)
             safe = safe.replace(/^\s*-\s+(.*$)/gim, '<div class="flex items-start ml-2 mb-1"><span class="mr-2 text-opera-red">•</span><span>$1</span></div>');
-            
-            // Paragraphs/Newlines
             safe = safe.replace(/\n\n/g, '</p><p class="mb-4">');
             safe = safe.replace(/\n/g, '<br>');
 
@@ -530,6 +534,8 @@
                             if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
                             else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1];
                             else if(url.includes('embed/')) id = url.split('embed/')[1];
+                            // Escape ID just in case
+                            id = window.escapeHtml(id);
                             return id ? `
                                 <div class="snap-center shrink-0 relative w-72 h-40 rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-black group">
                                     <iframe class="w-full h-full" src="https://www.youtube.com/embed/${id}?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
@@ -962,7 +968,7 @@
                             }).addTo(map2);
                             
                             if(isCurrent) {
-                                m.bindTooltip(node.food_name, { permanent: true, direction: 'top', className: 'custom-tooltip' });
+                                m.bindTooltip(window.escapeHtml(node.food_name), { permanent: true, direction: 'top', className: 'custom-tooltip' });
                             } else {
                                 m.on('click', () => { 
                                     window.ui.closeModal('detail-modal'); 
@@ -1027,7 +1033,7 @@
                         }).addTo(window.mapLogic.map);
                         
                         // Optional: Tooltip for origin
-                        originNode.bindTooltip(`Origin: ${d.origin_food_name}`, { direction: 'top', className: 'custom-tooltip' });
+                        originNode.bindTooltip(`Origin: ${window.escapeHtml(d.origin_food_name)}`, { direction: 'top', className: 'custom-tooltip' });
                         window.mapLogic.layers.push(originNode);
                     }
 
@@ -1081,14 +1087,14 @@
                     const card = document.createElement('div');
                     card.className = 'mobile-card p-4 flex items-center gap-4 active:bg-gray-50';
                     card.onclick = () => window.dashboard.showDetail(d);
-                    card.innerHTML = `<div class="w-14 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-sm relative">${img ? `<img src="${img}" class="w-full h-full object-cover" onerror="handleImageError(this)">` : `<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>`}</div><div class="flex-1 min-w-0"><h4 class="font-bold text-gray-800 text-sm truncate mb-1">${d.food_name}</h4><div class="flex items-center gap-2"><span class="text-[10px] text-gray-500 font-medium flex items-center bg-gray-50 px-2 py-0.5 rounded border border-gray-100"><i class="fas fa-map-marker-alt text-opera-red mr-1.5"></i> ${d.country}</span></div></div>`;
+                    card.innerHTML = `<div class="w-14 h-14 rounded-2xl bg-gray-100 flex-shrink-0 overflow-hidden shadow-sm relative">${img ? `<img src="${window.escapeHtml(img)}" class="w-full h-full object-cover" onerror="handleImageError(this)">` : `<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>`}</div><div class="flex-1 min-w-0"><h4 class="font-bold text-gray-800 text-sm truncate mb-1">${window.escapeHtml(d.food_name)}</h4><div class="flex items-center gap-2"><span class="text-[10px] text-gray-500 font-medium flex items-center bg-gray-50 px-2 py-0.5 rounded border border-gray-100"><i class="fas fa-map-marker-alt text-opera-red mr-1.5"></i> ${window.escapeHtml(d.country)}</span></div></div>`;
                     container.appendChild(card);
                 });
                 document.getElementById('btn-load-more').style.display = end >= filtered.length ? 'none' : 'inline-block';
             },
             loadMore: () => { state.pagination.page++; window.dashboard.renderFeed(); },
             
-            // --- DIPERBAIKI: Mengembalikan Tampilan Detail yang Lengkap ---
+            // --- DIPERBAIKI: Mengembalikan Tampilan Detail yang Lengkap + SECURE ---
             showDetail: (d) => {
                 state.currentDetail = d;
                 window.ui.openModal('detail-modal');
@@ -1102,26 +1108,26 @@
                 let imagesHtml = ''; 
                 if(d.image_url) { 
                     const urls = d.image_url.split(','); 
-                    imagesHtml = `<div class="flex overflow-x-auto gap-3 p-4 snap-x no-scrollbar">${urls.map(u => `<img src="${u.trim()}" class="snap-center w-72 h-56 object-cover rounded-2xl border border-gray-100 shadow-md" onerror="this.style.display='none'">`).join('')}</div>`; 
+                    imagesHtml = `<div class="flex overflow-x-auto gap-3 p-4 snap-x no-scrollbar">${urls.map(u => `<img src="${window.escapeHtml(u.trim())}" class="snap-center w-72 h-56 object-cover rounded-2xl border border-gray-100 shadow-md" onerror="this.style.display='none'">`).join('')}</div>`; 
                 }
                 
                 // 2. Video Carousel
                 const videoHtml = extractYoutubeCarousel(d.youtube_url);
 
-                // 3. Render HTML
+                // 3. Render HTML with ESCAPED variables
                 container.innerHTML = `
                     ${imagesHtml}
                     <div class="px-5 pb-8">
                         <!-- Title & UNESCO -->
                         <div class="flex justify-between items-start mb-2">
-                            <h1 class="text-3xl font-black text-opera-midnight leading-tight tracking-tight flex-1">${d.food_name}</h1>
+                            <h1 class="text-3xl font-black text-opera-midnight leading-tight tracking-tight flex-1">${window.escapeHtml(d.food_name)}</h1>
                             ${d.unesco_status ? `<div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center border border-green-200" title="UNESCO"><i class="fas fa-landmark text-green-600 text-xs"></i></div>` : ''}
                         </div>
                         
                         <!-- Badges -->
                         <div class="flex items-center gap-2 mb-8">
-                            <span class="px-3 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider">${d.country}</span>
-                            ${d.connection_type ? `<span class="px-3 py-1 rounded-md ${d.connection_type==='Trade'?'bg-yellow-50 text-yellow-700':d.connection_type==='Migration'?'bg-red-50 text-red-700':'bg-blue-50 text-blue-800'} text-[10px] font-bold uppercase tracking-wider">${d.connection_type}</span>` : ''}
+                            <span class="px-3 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider">${window.escapeHtml(d.country)}</span>
+                            ${d.connection_type ? `<span class="px-3 py-1 rounded-md ${d.connection_type==='Trade'?'bg-yellow-50 text-yellow-700':d.connection_type==='Migration'?'bg-red-50 text-red-700':'bg-blue-50 text-blue-800'} text-[10px] font-bold uppercase tracking-wider">${window.escapeHtml(d.connection_type)}</span>` : ''}
                         </div>
                         
                         <!-- Evolutionary Path (Tree) -->
@@ -1131,15 +1137,15 @@
                             <div class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-4 text-center">Evolutionary Path</div>
                             <div class="flex flex-col items-center gap-1 relative z-10">
                                 <div class="text-center">
-                                    <div class="font-bold text-gray-600 text-sm">${d.origin_food_name}</div>
-                                    <div class="text-[10px] text-gray-400 font-medium tracking-wide">${d.origin_country}</div>
+                                    <div class="font-bold text-gray-600 text-sm">${window.escapeHtml(d.origin_food_name)}</div>
+                                    <div class="text-[10px] text-gray-400 font-medium tracking-wide">${window.escapeHtml(d.origin_country)}</div>
                                 </div>
                                 <div class="h-6 w-0.5 bg-gray-300 my-1"></div>
                                 <div class="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center z-10 shadow-sm"><i class="fas fa-arrow-down text-[10px] text-gray-400"></i></div>
                                 <div class="h-6 w-0.5 bg-gray-300 my-1"></div>
                                 <div class="text-center">
-                                    <div class="font-black text-opera-red text-xl">${d.food_name}</div>
-                                    <div class="text-[10px] text-gray-500 font-medium tracking-wide">${d.country}</div>
+                                    <div class="font-black text-opera-red text-xl">${window.escapeHtml(d.food_name)}</div>
+                                    <div class="text-[10px] text-gray-500 font-medium tracking-wide">${window.escapeHtml(d.country)}</div>
                                 </div>
                             </div>
                         </div>` : ''}
@@ -1167,7 +1173,7 @@
                         <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-50 mb-8">
                             <h4 class="font-bold text-blue-900 text-[10px] uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-book"></i> Sources</h4>
                             <div class="flex flex-col gap-3 text-xs text-blue-700">
-                                ${d.research_links.split(',').map(l => `<a href="${l}" target="_blank" class="flex items-center gap-2 truncate hover:underline"><i class="fas fa-external-link-alt text-[10px] opacity-50"></i> <span class="truncate">${l}</span></a>`).join('')}
+                                ${d.research_links.split(',').map(l => `<a href="${window.escapeHtml(l)}" target="_blank" class="flex items-center gap-2 truncate hover:underline"><i class="fas fa-external-link-alt text-[10px] opacity-50"></i> <span class="truncate">${window.escapeHtml(l)}</span></a>`).join('')}
                             </div>
                         </div>` : ''}
                     </div>
@@ -1260,8 +1266,8 @@
                 container.innerHTML = matches.map(d => `
                     <div onclick="window.app.selectOrigin('${d.id}')" class="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer flex justify-between items-center transition-colors">
                         <div>
-                            <div class="font-bold text-sm text-opera-midnight">${d.food_name}</div>
-                            <div class="text-[10px] text-gray-500 font-medium">${d.country}</div>
+                            <div class="font-bold text-sm text-opera-midnight">${window.escapeHtml(d.food_name)}</div>
+                            <div class="text-[10px] text-gray-500 font-medium">${window.escapeHtml(d.country)}</div>
                         </div>
                         <div class="w-6 h-6 rounded-full bg-opera-red/10 flex items-center justify-center">
                             <i class="fas fa-link text-opera-red text-[10px]"></i>
