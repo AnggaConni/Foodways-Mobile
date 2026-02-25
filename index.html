@@ -462,9 +462,8 @@
     </div>
 
     <script>
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzu2WYcJRyqESeiRbc3eEM3BjAYMaeRr-EZK15V3iUJAee_LX3HIHABMohx1EXELGzh/exec';
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTuPArVU91axob82CTzIgfmODCpa43OrFNIymoOVfV6UwtzUH7Yzb-yzorb3yBooJikXvsKSv10z3fV/pub?output=csv';
-        
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyr5JxnjXhpWqgb0sgXFTCFTbFjjOSrCrYEDPwWbo8zkpwVoH0IbGJfcJRLBlaIBbEK/exec';
+                
         window.handleImageError = function(el) {
             el.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-xl text-gray-300"><i class="fas fa-utensils"></i></div>';
         };
@@ -1185,14 +1184,36 @@
 
         window.app = {
             init: () => {
-                if (typeof Papa !== 'undefined') {
-                    Papa.parse(CSV_URL, {
-                        download: true, header: true, skipEmptyLines: true,
-                        complete: (res) => { if(res.data.length) { state.data = res.data.map(transformData).filter(x => x.lat && x.lng); document.getElementById('loading-indicator').innerHTML = '<i class="fas fa-check text-green-400"></i> <span class="text-xs text-gray-300 ml-1">Synced</span>'; document.getElementById('btn-enter').classList.remove('hidden'); } }
-                    });
-                }
+                // --- KODE BARU: FETCH DARI BIGQUERY VIA GAS ---
+                const loadingEl = document.getElementById('loading-indicator');
+                
+                // Pastikan GAS_URL sudah didefinisikan di bagian atas script
+                fetch(GAS_URL + '?action=get_all')
+                .then(r => r.json())
+                .then(d => {
+                    if(d.status === 'success' && d.data.length > 0) {
+                        // 1. Simpan Data ke State & Filter yang valid
+                        state.data = d.data.map(transformData).filter(x => x.lat && x.lng);
+                        
+                        // 2. Update Status UI (Hijau "Cloud Synced")
+                        if(loadingEl) {
+                             loadingEl.innerHTML = '<i class="fas fa-check text-green-400"></i> <span class="text-[10px] text-gray-300 ml-2 font-bold uppercase tracking-widest">Cloud Synced</span>';
+                        }
+
+                        // 3. Munculkan Tombol Masuk
+                        const btnEnter = document.getElementById('btn-enter');
+                        if(btnEnter) btnEnter.classList.remove('hidden');
+                    } else {
+                        if(loadingEl) loadingEl.innerHTML = '<span class="text-red-400 text-xs font-bold">Data Empty</span>';
+                    }
+                })
+                .catch(err => {
+                    console.error("Fetch Error:", err);
+                    if(loadingEl) loadingEl.innerHTML = '<span class="text-red-400 text-xs font-bold">Connection Failed</span>';
+                });
             },
-            // ... (Fungsi enterApp, enterAdmin, switchTab, handleGlobalSearch, dll tetap sama)
+            
+            // ... (Kode di bawah ini JANGAN DIHAPUS, biarkan apa adanya)
             enterApp: () => { document.getElementById('landing-page').classList.add('opacity-0'); setTimeout(() => { document.getElementById('landing-page').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); window.dashboard.renderKPI(); window.dashboard.renderFeed(); window.mapLogic.init(); window.mapLogic.render(); }, 500); },
             
             enterAdmin: () => {
@@ -1209,6 +1230,8 @@
                 if(tab === 'map') { setTimeout(() => window.mapLogic.map.invalidateSize(), 100); }
                 if(tab === 'profile') { setTimeout(() => window.dashboard.renderAnalytics(), 100); }
             },
+            
+            // ... (lanjutkan sisa fungsi handleGlobalSearch, initiateAddEntry, dll seperti semula)
             handleGlobalSearch: (val) => { state.filter = val; state.pagination.page = 1; window.dashboard.renderFeed(); window.mapLogic.render(); },
             initiateAddEntry: () => { state.editId = null; document.querySelectorAll('#input-modal input, #input-modal textarea').forEach(e => e.value = ''); document.getElementById('input-title').innerText = 'New Entry'; document.getElementById('btn-delete').classList.add('hidden'); document.getElementById('geo-status-text').innerText='Area not set'; window.ui.openModal('input-modal'); },
             
